@@ -20,6 +20,7 @@ Database -
 - [x] Login UI
 - [x] Dashboard with Explorer and Editor 
 - [x] Explorer can be dragged to increase or decrease its width
+- [x] User can close and open subfiles in the explorer using arrow (with static data for now)
 
 # Near Future Features :-
 - [ ] Ability to add and delete files from Explorer
