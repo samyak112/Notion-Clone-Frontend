@@ -1,0 +1,93 @@
+.individual_doc_wrap{
+    padding-inline: .5rem;
+    padding-block: .2rem;
+    cursor: pointer;
+  }
+  
+  .individual_doc{
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+  }
+  
+  .individual_doc_wrap:hover{
+    background-color: #e0e0df;
+  }
+  
+  .left_comps{
+    display: flex;
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+  }
+  
+  .right_comps{
+    display: none;
+  }
+
+  #expand_options_wrap{
+    position: absolute;
+  }
+
+  #expand_options{
+    position: absolute;
+    top: 2rem;
+    left: 0px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 10%), 0 8px 16px rgb(0 0 0 / 10%);
+    border-radius: 3px;
+    width: 15rem;
+    padding: .5rem;
+  }
+
+  .expand_options_comps{
+    padding-left: .5rem;
+    padding-block: .2rem;
+    display: flex;
+    align-items: center;
+    margin-bottom: .2rem;
+    border-radius: 2px;
+    color: #37352F;
+  }
+
+  .individual_doc_wrap:hover .right_comps{
+    display: flex;
+  }
+
+  .expand_options_comps:hover{
+    background-color: #ece9e9;
+  }
+
+  .edit_file_option{
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    padding-inline: .2rem;
+  }
+  
+  .edit_file_option:hover{
+    background-color: #d5d2d2;
+  }
+
+  #empty_page{
+    font-size: .9rem;
+    color: #A3A29E;
+  }
+
+  #modal{
+    margin: auto;
+    width: 60%;
+    height: 80%;
+  }
+
+  #modal_wrap{
+    height: 100%;
+    overflow-y: scroll;
+    background-color: white;
+  }
+
+  #modal_wrap::-webkit-scrollbar{
+    display: none;
+  }
+
+ 

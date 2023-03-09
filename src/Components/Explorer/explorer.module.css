@@ -3,7 +3,14 @@
   box-sizing: border-box;
   display: grid;
   grid-template-columns: auto 5px;
+  position: relative;
+}
+
+#explorer{
+  display: grid;
+  grid-template-rows: 3rem auto 3rem;
   background-color: #f6f6f3;
+  position: relative;
 }
 
 #explorer_width_toggle {
@@ -15,7 +22,6 @@
 }
 
 #navbar_wrap {
-  height: 50px;
   padding-block: .5rem;
   padding-inline: .5rem;
   cursor: pointer;
@@ -64,4 +70,26 @@
 
 #explorer_toggle:hover {
   background-color: rgba(55, 53, 47, 0.08);
+}
+
+#all_docs{
+  border-block: 1px solid rgb(188, 183, 182);
+  overflow-y: scroll;
+  max-height: calc(100vh - (6rem));
+}
+
+
+
+#add_new_page{
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding-left: .5rem;
+  cursor: pointer;
+  color: #37352FA6;
+  font-weight: 600;
+}
+
+#add_new_page:hover{
+  background-color: #e4e1e1;
 }

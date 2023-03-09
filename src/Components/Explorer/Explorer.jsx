@@ -1,14 +1,19 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import LeftArrow from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import { useDispatch, useSelector } from 'react-redux';
+import AddIcon from '@mui/icons-material/Add';
+import Skeleton from '@mui/material/Skeleton';
 import styles from './explorer.module.css';
 import { ExplorerWidthValue, StartTracking } from '../../Redux/ExplorerSlice';
+import IndividualFiles from '../IndividualFiles/IndividualFiles';
 
 function Explorer() {
   const dispatch = useDispatch();
   const ExplorerWidth = useSelector((state) => state.ExplorerDetails.value);
   const IsTracking = useSelector((state) => state.ExplorerDetails.tracker);
+  const [FileData, setFileData] = useState([]);
+  const url = import.meta.env.VITE_URL;
 
   function IntializeTracking() {
     dispatch(StartTracking(true));
@@ -24,10 +29,27 @@ function Explorer() {
     }
   }
 
+  const GetAllFilesData = async () => {
+    const res = await fetch(`${url}/GetAllFiles`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth-token': localStorage.getItem('token'),
+      },
+    });
+    const data = await res.json();
+    setFileData(data.data);
+  };
+
+  useEffect(() => {
+    GetAllFilesData();
+  }, []);
+
   return (
     <div
       id={styles.main}
       onMouseUp={() => { dispatch(StartTracking(false)); }}
+      style={{ width: `${ExplorerWidth}px` }}
       onMouseMove={ReduceExplorer}
     >
       <div id={styles.explorer}>
@@ -42,8 +64,23 @@ function Explorer() {
             </div>
           </div>
         </div>
-        <div id={styles.all_docs}>s</div>
-        <div id={styles.add_new_page}>s</div>
+
+        <div id={styles.all_docs}>
+          {
+            FileData.length === 0
+              ? new Array(5).fill().map(() => (
+                <Skeleton animation="wave" style={{ marginInline: '.5rem', padding: '.2rem' }} />
+              ))
+              : FileData.map((elem) => (
+                <IndividualFiles data={elem} />
+              ))
+            }
+        </div>
+        <div id={styles.add_new_page}>
+          <AddIcon />
+          {' '}
+          New page
+        </div>
       </div>
       <div
         id={styles.explorer_width_toggle}
