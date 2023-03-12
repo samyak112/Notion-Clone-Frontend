@@ -1,7 +1,7 @@
 import React from 'react';
 import { ImageRounded, SentimentSatisfiedAlt } from '@mui/icons-material';
 import styles from './Editor.module.css';
-import CoverPhoto from '../../assets/cover_photo.jpg';
+import CoverPhoto from '../../assets/cover_photo.jpeg';
 
 function Editor() {
   return (

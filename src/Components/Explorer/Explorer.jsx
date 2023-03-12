@@ -8,12 +8,10 @@ import styles from './explorer.module.css';
 import { ExplorerWidthValue, StartTracking } from '../../Redux/ExplorerSlice';
 import IndividualFiles from '../IndividualFiles/IndividualFiles';
 
-function Explorer() {
+function Explorer({ FileData }) {
   const dispatch = useDispatch();
   const ExplorerWidth = useSelector((state) => state.ExplorerDetails.value);
   const IsTracking = useSelector((state) => state.ExplorerDetails.tracker);
-  const [FileData, setFileData] = useState([]);
-  const url = import.meta.env.VITE_URL;
 
   function IntializeTracking() {
     dispatch(StartTracking(true));
@@ -28,22 +26,6 @@ function Explorer() {
       }
     }
   }
-
-  const GetAllFilesData = async () => {
-    const res = await fetch(`${url}/GetAllFiles`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-auth-token': localStorage.getItem('token'),
-      },
-    });
-    const data = await res.json();
-    setFileData(data.data);
-  };
-
-  useEffect(() => {
-    GetAllFilesData();
-  }, []);
 
   return (
     <div
@@ -67,7 +49,7 @@ function Explorer() {
 
         <div id={styles.all_docs}>
           {
-            FileData.length === 0
+            FileData.length === 0 || FileData === false
               ? new Array(5).fill().map(() => (
                 <Skeleton animation="wave" style={{ marginInline: '.5rem', padding: '.2rem' }} />
               ))

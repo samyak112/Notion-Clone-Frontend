@@ -4,12 +4,12 @@
   display: grid;
   grid-template-columns: auto 5px;
   position: relative;
+  background-color: #f6f6f3;
 }
 
 #explorer{
   display: grid;
   grid-template-rows: 3rem auto 3rem;
-  background-color: #f6f6f3;
   position: relative;
 }
 

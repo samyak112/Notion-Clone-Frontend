@@ -9,6 +9,11 @@
     gap: 1rem;
     justify-content: space-between;
   }
+
+  #file_link{
+    text-decoration: none;
+    color: #989894;
+  }
   
   .individual_doc_wrap:hover{
     background-color: #e0e0df;

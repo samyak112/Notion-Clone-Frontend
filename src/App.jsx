@@ -4,6 +4,7 @@ import {
   Route,
   Routes,
 } from 'react-router-dom';
+import Auth from './Auth/Auth';
 import Loading from './Components/Loading/Loading';
 
 const Login = React.lazy(() => import('./Pages/Login/Login'));
@@ -13,23 +14,24 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route
-          path="/"
-          element={(
-            <React.Suspense fallback={<Loading />}>
-              <Login />
-            </React.Suspense>
+        <Route element={<Auth />}>
+          <Route
+            path="/"
+            element={(
+              <React.Suspense fallback={<Loading />}>
+                <Login />
+              </React.Suspense>
           )}
-        />
-
-        <Route
-          path="/dashboard"
-          element={(
-            <React.Suspense fallback={<Loading />}>
-              <Dashboard />
-            </React.Suspense>
+          />
+          <Route
+            path="/:FileId"
+            element={(
+              <React.Suspense fallback={<Loading />}>
+                <Dashboard />
+              </React.Suspense>
           )}
-        />
+          />
+        </Route>
 
       </Routes>
     </Router>

@@ -1,61 +1,42 @@
 import React, { useState } from 'react';
-import Form from 'react-bootstrap/Form';
 import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import styles from './login.module.css';
 import logo from '../../assets/logo.svg';
 import googlelogo from '../../assets/google_logo.svg';
 
 function Login() {
-  // const [LoginDetails, setLoginDetails] = useState({ email: '', name: '' });
+  const Navigate = useNavigate();
 
-  const LoginReq = async (UserData) => {
-    const { email, name } = UserData;
-
-    const res = await fetch(`${import.meta.env.VITE_URL}/signin`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email, name,
-      }),
-
-    });
-
-    // to check if data is coming perfectly or not
-    const data = await res.json();
-    console.log(data);
-    // if (data.status === 442) {
-    //   console.log('invalid username or password');
-    //   setalert_message('invalid username or password');
-    //   setalert_box(true);
-    // } else if (data.status === 201) {
-    //   localStorage.setItem('token', data.token);
-    //   console.log('succesfully logged in');
-
-    //   Navigate('/channels/@me');
-    // } else if (data.status === 422) {
-    //   console.log('not verified yet');
-    //   setalert_message('not verified yet');
-    //   setalert_box(true);
-    // }
-  };
-
-  const login = useGoogleLogin({
-    onSuccess: async (respose) => {
+  const GoogleSignin = useGoogleLogin({
+    onSuccess: async (response) => {
       try {
-        const res = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+        const res = await fetch(`${import.meta.env.VITE_URL}/google_signin`, {
+          method: 'POST',
           headers: {
-            Authorization: `Bearer ${respose.access_token}`,
+            'Content-Type': 'application/json',
           },
+          body: JSON.stringify({
+            response,
+          }),
+
         });
-        LoginReq(res.data);
-        console.log(res.data);
+        const data = await res.json();
+        const { status } = data;
+        // didnt added token in destructuring because token is only recieved if status is 200 or 201
+        if (status === 201 || status === 200) {
+          const { FileId, token } = data;
+          console.log('came here');
+          localStorage.setItem('token', token);
+          localStorage.setItem('LastVisitedFileId', FileId);
+          Navigate(`/${FileId}`);
+        }
       } catch (err) {
-        console.log(err);
+        console.log(err, 'camer here');
       }
     },
+    flow: 'auth-code',
   });
 
   return (
@@ -67,7 +48,7 @@ function Login() {
       <div id={styles.login_body}>
         <div id={styles.login_body_wrap}>
           <div className={styles.login_body_comps} id={styles.heading}>Log in</div>
-          <div className={styles.login_body_comps} id={styles.google_login} onClick={login}>
+          <div className={styles.login_body_comps} id={styles.google_login} onClick={GoogleSignin}>
             <div id={styles.google_login_wrap}>
               <div className={styles.image}>
                 <img src={googlelogo} alt="" />
@@ -75,13 +56,6 @@ function Login() {
               <div className={styles.text}>Continue with Google</div>
             </div>
           </div>
-          <form>
-            <div id={styles.manual_login}>
-              <div id={styles.label}>Email</div>
-              <div id={styles.input_field}><input type="text" placeholder="Enter Email" required /></div>
-              <button id={styles.manual_login_button} type="submit">Conitnue with Email</button>
-            </div>
-          </form>
         </div>
 
       </div>
