@@ -21,7 +21,7 @@ Database -
 - [x] Dashboard with Explorer and Editor 
 - [x] Explorer can be dragged to increase or decrease its width
 - [x] User can close and open subfiles in the explorer using arrow (with static data for now)
-- [x] Redirects User to the last Edited File automatically , irrespective of is someone deleted something from local storage or working on a new device you'll be redirected to the last edited file and if new user then user will be redirected to 'Get Started' File 
+- [x] Redirects User to the last Edited File automatically , irrespective of if someone deleted something from local storage or working on a new device you'll be redirected to the last edited file and if new user then user will be redirected to 'Get Started' File 
 
 # Near Future Features :-
 - [ ] Ability to add and delete files from Explorer
