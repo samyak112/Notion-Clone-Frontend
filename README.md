@@ -18,6 +18,9 @@ Back-end -
 Database - 
 1. Mongodb
 
+Linting Tool - 
+1. EsLint
+
 # Current Features:- 
 - [x] Login System
 - [x] Dashboard with Explorer and Editor 
