@@ -2,6 +2,8 @@
 
 Description -
 This appication is an attempt to clone the functionalites of the Notion web version.
+
+Backend Here - https://github.com/samyak112/Notion-Clone-Backend
 # Technologies Used
 
 Front end-
