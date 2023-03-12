@@ -17,7 +17,7 @@ Database -
 1. Mongodb
 
 # Current Features:- 
-- [x] Login UI
+- [x] Login System
 - [x] Dashboard with Explorer and Editor 
 - [x] Explorer can be dragged to increase or decrease its width
 - [x] User can close and open subfiles in the explorer using arrow (with static data for now)
