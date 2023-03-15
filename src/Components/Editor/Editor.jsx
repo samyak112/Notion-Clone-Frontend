@@ -1,9 +1,10 @@
 import React from 'react';
 import { ImageRounded, SentimentSatisfiedAlt } from '@mui/icons-material';
+import PropTypes from 'prop-types';
 import styles from './Editor.module.css';
 import CoverPhoto from '../../assets/cover_photo.jpeg';
 
-function Editor() {
+function Editor({ IndividualFileData }) {
   return (
     <div id={styles.main}>
 
@@ -35,11 +36,27 @@ function Editor() {
           <div className={styles.editor_comps} id={styles.title}>
             <input className={styles.input_field} type="text" placeholder="Untitled" />
           </div>
-          <div className={styles.editor_comps} id={styles.content}></div>
+          <div className={styles.editor_comps} id={styles.content} />
         </div>
       </div>
     </div>
   );
 }
+
+Editor.defaultProps = {
+  IndividualFileData: {
+    FileName: null,
+    icon: null,
+    content: [],
+  },
+};
+
+Editor.propTypes = {
+  IndividualFileData: PropTypes.shape({
+    FileName: PropTypes.string,
+    icon: PropTypes.string,
+    content: PropTypes.shape([]),
+  }),
+};
 
 export default Editor;

@@ -1,7 +1,11 @@
 .individual_doc_wrap{
     padding-inline: .5rem;
     padding-block: .2rem;
+    margin-inline: .3rem;
+    margin-top: .2rem;
+    border-radius: 4px;
     cursor: pointer;
+    font-size: .9rem;
   }
   
   .individual_doc{
@@ -12,7 +16,7 @@
 
   #file_link{
     text-decoration: none;
-    color: #989894;
+    color: #4e4e4d;
   }
   
   .individual_doc_wrap:hover{
@@ -21,13 +25,18 @@
   
   .left_comps{
     display: flex;
-    white-space: nowrap; 
+    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; 
+    text-overflow: ellipsis;
   }
   
   .right_comps{
-    display: none;
+    display: flex;
+  }
+
+  .option_icon_wrap{
+    display: flex;
+    visibility: hidden;
   }
 
   #expand_options_wrap{
@@ -43,6 +52,7 @@
     border-radius: 3px;
     width: 15rem;
     padding: .5rem;
+    z-index: 1;
   }
 
   .expand_options_comps{
@@ -50,13 +60,26 @@
     padding-block: .2rem;
     display: flex;
     align-items: center;
+    gap:.5rem;
     margin-bottom: .2rem;
     border-radius: 2px;
     color: #37352F;
   }
 
-  .individual_doc_wrap:hover .right_comps{
+  .individual_doc_wrap:hover .option_icon_wrap{
+    visibility: visible;
     display: flex;
+  }
+
+  .overlay_container{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    z-index: 1;
+    opacity:0;
+    cursor: default;
   }
 
   .expand_options_comps:hover{

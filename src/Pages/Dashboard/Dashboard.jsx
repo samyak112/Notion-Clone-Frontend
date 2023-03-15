@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useEffect, useState } from 'react';
 import Explorer from '../../Components/Explorer/Explorer';
 import styles from './dashboard.module.css';
@@ -10,7 +9,7 @@ function Register() {
   const url = import.meta.env.VITE_URL;
 
   const GetAllFilesData = async () => {
-    const res = await fetch(`${url}/GetAllFiles`, {
+    const res = await fetch(`${url}/FileData`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

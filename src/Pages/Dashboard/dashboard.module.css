@@ -1,5 +1,7 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap'); */
+
 #main {
-  height: 100vh;
+  font-family: 'Open Sans', sans-serif;  height: 100vh;
   width: 100vw;
   display: flex;
   user-select: none;

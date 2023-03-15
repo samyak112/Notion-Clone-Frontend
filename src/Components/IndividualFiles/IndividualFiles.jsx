@@ -34,18 +34,17 @@ function IndividualFiles({ data, margin }) {
   const dispatch = useDispatch();
   const IconConfig = { IconSize: 'small', IconColor: '#5A5A57', ArrowColor: '#636363' };
   const { IconSize, IconColor, ArrowColor } = IconConfig;
-
+  const [WidthAndHeight, setWidthAndHeight] = useState({ width: null, height: null });
   const [expand, setexpand] = useState(false);
   const [ShowOptions, setShowOptions] = useState(false);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleOpen = () => setShow(true);
-
   const url = import.meta.env.VITE_URL;
 
   const AddFile = async () => {
     const res = await fetch(`${url}/AddFile`, {
-      method: 'POST',
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'x-auth-token': localStorage.getItem('token'),
@@ -60,8 +59,13 @@ function IndividualFiles({ data, margin }) {
 
   return (
     <>
+
       <div className={styles.individual_doc_wrap}>
-        <Link to={_id} id={styles.file_link}>
+
+        {/* this div used to cover the whole page when user is checking the options
+        it is not visible tho but stops users from clicking anywhere else */}
+        <div className={styles.overlay_container} style={ShowOptions ? { width: '100vw', height: '100vh' } : { width: '0vw', height: '0vh' }} onClick={() => { setShowOptions(!ShowOptions); }} />
+        <Link to={`/${_id}`} id={styles.file_link}>
 
           <div className={styles.individual_doc} style={{ marginLeft: `${margin}rem` }}>
             <div className={styles.left_comps}>
@@ -85,31 +89,36 @@ function IndividualFiles({ data, margin }) {
               </div>
               <div>{FileName}</div>
             </div>
+
             <div
               className={styles.right_comps}
-              onMouseLeave={() => {
-                if (ShowOptions) {
-                  setShowOptions(!ShowOptions);
-                }
-              }}
+              // onMouseLeave={() => {
+              //   if (ShowOptions) {
+              //     setShowOptions(!ShowOptions);
+              //   }
+              // }}
             >
-              <div id={styles.Note_options} className={`${styles.Note_options} ${styles.edit_file_option}`}>
-                <MoreHorizIcon
-                  onClick={() => { setShowOptions(!ShowOptions); }}
-                  fontSize={IconSize}
-                  htmlColor={IconColor}
-                />
+
+              <div className={styles.option_icon_wrap}>
+                <div id={styles.Note_options} className={`${styles.Note_options} ${styles.edit_file_option}`}>
+                  <MoreHorizIcon
+                    onClick={() => { setShowOptions(!ShowOptions); }}
+                    fontSize={IconSize}
+                    htmlColor={IconColor}
+                  />
+                </div>
+                <div id={styles.Note_options} className={`${styles.Note_options} ${styles.edit_file_option}`}>
+                  <AddIcon
+                    onClick={() => {
+                      dispatch(CurrentFileId(_id));
+                      setShow(true);
+                    }}
+                    fontSize={IconSize}
+                    htmlColor={IconColor}
+                  />
+                </div>
               </div>
-              <div id={styles.Note_options} className={`${styles.Note_options} ${styles.edit_file_option}`}>
-                <AddIcon
-                  onClick={() => {
-                    dispatch(CurrentFileId(_id));
-                    setShow(true);
-                  }}
-                  fontSize={IconSize}
-                  htmlColor={IconColor}
-                />
-              </div>
+
               <div id={styles.expand_options_wrap} style={{ display: ShowOptions ? 'block' : 'none' }}>
                 <div id={styles.expand_options}>
                   <div className={styles.expand_options_comps}>
@@ -138,7 +147,12 @@ function IndividualFiles({ data, margin }) {
               ? <div id={styles.empty_page} style={{ marginLeft: `${margin + 2}rem` }}>No pages inside</div>
               : data.Items.map((elem) => (
                 <div>
-                  {/* Here margin is being sent as a prop because if I set the margin right here then the whole div will be moved forward and it will create problems when user will hover on it and if i directly put 2 rem in the rendered div then all the files will be on same level so i passed it as a prop and incrementing it according to the level of nest */}
+                  {/* Here margin is being sent as a prop because if I set
+                   the margin right here then the whole div will be moved
+                    forward and it will create problems when user will
+                     hover on it and if i directly put 2 rem in the rendered
+                      div then all the files will be on same level so i passed
+                       it as a prop and incrementing it according to the level of nest */}
                   <IndividualFiles data={elem} margin={margin === 0 ? 1.5 : margin + 1.5} />
                 </div>
               ))

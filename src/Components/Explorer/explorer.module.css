@@ -4,7 +4,7 @@
   display: grid;
   grid-template-columns: auto 5px;
   position: relative;
-  background-color: #f6f6f3;
+  background-color: #FBFBFA;
 }
 
 #explorer{
@@ -47,16 +47,23 @@
 
 #user_details {
   display: flex;
-  justify-content: flex-start;
-  gap: 1rem;
+  justify-content: center;
+  gap: 1.5rem;
+  /* border: 2px solid black; */
 }
 
-#profile_image {
+#profile_image_wrap {
   background-color: #004D40;
   color: white;
+  height: 100%;
+  position: relative;
+}
+
+#profile_image{
+  position: absolute;
+  height: 80%;
   border-radius: 5px;
-  height: 90%;
-  width: 30px;
+
 }
 
 #profile_name {
