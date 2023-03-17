@@ -17,7 +17,7 @@
 }
 
 #centered_area_inner_wrap{
-    width: 50%;
+    width: 55%;
     position: absolute;
     height: 100%;
     bottom: 50%;
@@ -57,7 +57,7 @@
 
 #main_content{
     height: inherit;
-    width: 50%;
+    width: 55%;
 }
 
 #options{

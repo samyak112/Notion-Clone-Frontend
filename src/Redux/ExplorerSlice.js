@@ -7,7 +7,8 @@ export const ExplorerDetailsSlice = createSlice({
     value: 250,
     tracker: false,
     current_id: null,
-    current_name: null,
+    LastUpdatedValue: { FileName: null, Icon: null },
+    CurrentValue: { FileName: null, Icon: null },
   },
   reducers: {
     ExplorerWidthValue: (state, action) => {
@@ -20,14 +21,17 @@ export const ExplorerDetailsSlice = createSlice({
       state.current_id = action.payload;
     },
     CurrentFileName: (state, action) => {
-      state.current_name = action.payload;
+      state.CurrentValue = action.payload;
+    },
+    LastUpdatedFileName: (state, action) => {
+      state.LastUpdatedValue = action.payload;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
 export const {
-  ExplorerWidthValue, StartTracking, CurrentFileId, CurrentFileName,
+  ExplorerWidthValue, StartTracking, CurrentFileId, CurrentFileName, LastUpdatedFileName,
 } = ExplorerDetailsSlice.actions;
 
 export default ExplorerDetailsSlice.reducer;

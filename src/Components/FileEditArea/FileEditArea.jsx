@@ -11,12 +11,11 @@ function FileEditArea() {
   const IsTracking = useSelector((state) => state.ExplorerDetails.tracker);
   const { FileId } = useParams();
   const url = import.meta.env.VITE_URL;
-  const [IndividualFileData, setIndividualFileData] = useState(null);
+  const [IndividualFileData, setIndividualFileData] = useState({ CoverPhoto: null, values: null });
 
   function StopTracking() {
     dispatch(StartTracking(false));
   }
-  
 
   const GetFileData = async () => {
     const res = await fetch(`${url}/FileData`, {
@@ -30,12 +29,12 @@ function FileEditArea() {
       }),
     });
     const data = await res.json();
-    setIndividualFileData(data);
+    setIndividualFileData(data.FileData);
   };
 
   useEffect(() => {
     GetFileData();
-  }, []);
+  }, [FileId]);
 
   function ExtendExplorer(e) {
     if (IsTracking === true) {

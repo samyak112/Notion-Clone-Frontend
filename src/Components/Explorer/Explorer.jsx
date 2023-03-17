@@ -5,7 +5,7 @@ import LeftArrow from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import { useDispatch, useSelector } from 'react-redux';
 import AddIcon from '@mui/icons-material/Add';
 import Skeleton from '@mui/material/Skeleton';
-import jwt from 'jwt-decode'
+import jwt from 'jwt-decode';
 import styles from './explorer.module.css';
 import { ExplorerWidthValue, StartTracking } from '../../Redux/ExplorerSlice';
 import IndividualFiles from '../IndividualFiles/IndividualFiles';
@@ -14,7 +14,6 @@ function Explorer({ FileData }) {
   const token = localStorage.getItem('token');
   const UserCreds = jwt(token);
   const { username, profile_pic } = UserCreds;
-
   const dispatch = useDispatch();
   const ExplorerWidth = useSelector((state) => state.ExplorerDetails.value);
   const IsTracking = useSelector((state) => state.ExplorerDetails.tracker);
@@ -57,8 +56,8 @@ function Explorer({ FileData }) {
         <div id={styles.all_docs}>
           {
             FileData.length === 0 || FileData === false
-              ? new Array(5).fill().map(() => (
-                <Skeleton animation="wave" style={{ marginInline: '.5rem', padding: '.2rem' }} />
+              ? new Array(5).fill().map((index) => (
+                <Skeleton key={index} animation="wave" style={{ marginInline: '.5rem', padding: '.2rem' }} />
               ))
               : FileData.map((elem) => (
                 <IndividualFiles key={elem._id} data={elem} />
