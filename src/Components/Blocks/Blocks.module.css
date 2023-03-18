@@ -1,0 +1,40 @@
+.main{
+    display: flex;
+    position: relative;
+    height: 100%;
+}
+
+.content_blocks{
+    display: flex;
+    position: relative;
+    width: 100%;
+    padding-block: .2rem;
+    cursor: text;
+}
+
+.options{
+    visibility: hidden;
+    position: absolute;
+    left: -3rem;
+    color: rgb(202, 199, 199);
+    cursor: grab;
+}
+
+.options:active{
+    cursor: grabbing;
+}
+
+.content_blocks:hover > .options{
+    visibility: visible;
+}
+
+.content_blocks:active > .options{
+    color: white;
+}
+
+.content_blocks:active{
+    user-select: none;
+    outline: none;
+    background-color: transparent;
+    opacity: 1;
+}

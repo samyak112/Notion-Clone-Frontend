@@ -1,9 +1,11 @@
+/* eslint-disable no-underscore-dangle */
 import React, { useEffect, useState } from 'react';
 import { ImageRounded, SentimentSatisfiedAlt } from '@mui/icons-material';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './Editor.module.css';
 import { CurrentFileName } from '../../Redux/ExplorerSlice';
+import Blocks from '../Blocks/Blocks';
 
 function Editor({ IndividualFileData }) {
   const CurrentFileDetails = useSelector((state) => state.ExplorerDetails.CurrentValue);
@@ -11,28 +13,12 @@ function Editor({ IndividualFileData }) {
   const [blocks, setblocks] = useState(null);
   const { FileName, Icon } = CurrentFileDetails;
   const [DraggingDetails, setDraggingDetails] = useState({
-    Started: false, source: null, destination: null,
+    Started: false, source: null, destination: null, current: null, direction: null,
   });
   const dispatch = useDispatch();
   useEffect(() => {
     setblocks(values);
   }, [values]);
-
-  function InitiateDragging(index) {
-    setDraggingDetails({
-      ...DraggingDetails, Started: true, source: index,
-    });
-  }
-
-  function StopDragging() {
-    setDraggingDetails({ ...DraggingDetails, Started: false });
-  }
-
-  function TrackDraggedElement(index) {
-    if (DraggingDetails.Started === false) {
-      setDraggingDetails({ ...DraggingDetails, destination: index });
-    }
-  }
 
   return (
     <div id={styles.main}>
@@ -51,14 +37,26 @@ function Editor({ IndividualFileData }) {
           <div id={styles.centered_area_inner_wrap}>
             <div id={styles.emoji}>{Icon}</div>
             <div id={styles.options}>
-              <div className={styles.options_comps}>
-                <SentimentSatisfiedAlt />
-                Add icon
-              </div>
-              <div className={styles.options_comps}>
-                <ImageRounded />
-                Add cover
-              </div>
+              {
+                Icon == null
+                  ? (
+                    <div className={styles.options_comps}>
+                      <SentimentSatisfiedAlt />
+                      Add icon
+                    </div>
+                  )
+                  : ''
+              }
+              {
+                CoverPhoto == null
+                  ? (
+                    <div className={styles.options_comps}>
+                      <ImageRounded />
+                      Add cover
+                    </div>
+                  )
+                  : ''
+              }
             </div>
           </div>
         </div>
@@ -73,15 +71,7 @@ function Editor({ IndividualFileData }) {
             {
             blocks != null
               ? blocks.map((elem, index) => (
-                <div
-                  contentEditable="true"
-                  draggable
-                  onDragEnter={() => { TrackDraggedElement(index); }}
-                  onDragStart={() => { InitiateDragging(index); }}
-                  onDragEnd={() => { StopDragging(index); }}
-                >
-                  {elem.value}
-                </div>
+                <Blocks key={elem._id} BlockData={{ index: elem.index, value: elem.value }} />
               ))
               : ''
             }
