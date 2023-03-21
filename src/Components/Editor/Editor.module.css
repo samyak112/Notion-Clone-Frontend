@@ -31,6 +31,12 @@
     font-size: 4rem;
     line-height: 100%;
     margin-bottom: 1rem;
+    cursor: pointer;
+}
+
+#emoji_picker{
+    position: absolute;
+    z-index: 1;
 }
 
 #cover_photo{
@@ -40,6 +46,39 @@
 
 #cover_image_wrap{
     height: 100%;
+}
+
+#cover_photo_options{
+    display: none;
+    position: absolute;
+    right: 5rem;
+    bottom: 1rem;
+    font-size: .8rem;
+    background-color: #ebe6e6;
+    cursor: pointer;
+    animation: faded .3s 1;
+}
+
+@keyframes faded {
+    0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+  }
+
+.cover_photo_options_comps{
+    padding-block: .2rem;
+    padding-inline: .3rem;
+}
+
+.cover_photo_options_comps:hover{
+    background-color: #dedada;
+}
+
+#cover_image_wrap:hover > #cover_photo_options{
+    display: flex;
 }
 
 #image{
@@ -107,6 +146,16 @@
     color: #e7e3e3;
 }
 
+.overlay_container{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    z-index: 1;
+    opacity:0;
+    cursor: default;
+  }
 
 
 

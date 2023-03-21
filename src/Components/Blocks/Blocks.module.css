@@ -1,7 +1,8 @@
 .main{
-    display: flex;
+    /* display: flex;
     position: relative;
-    height: 100%;
+    height: 100%; */
+    /* border: 2px solid black; */
 }
 
 .content_blocks{
@@ -37,4 +38,5 @@
     outline: none;
     background-color: transparent;
     opacity: 1;
+    
 }

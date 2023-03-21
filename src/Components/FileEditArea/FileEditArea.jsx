@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import styles from './FileEditArea.module.css';
-import { ExplorerWidthValue, StartTracking } from '../../Redux/ExplorerSlice';
+import {
+  ExplorerWidthValue, StartTracking,
+} from '../../Redux/ExplorerSlice';
 import Editor from '../Editor/Editor';
 
 function FileEditArea() {
@@ -33,6 +35,8 @@ function FileEditArea() {
   };
 
   useEffect(() => {
+    // dispatch(CurrentFileName({ ...CurrentFileDetails , CurrentCoverPhoto }));
+    // dispatch(LastUpdatedFileName({ FileName, Icon: icon }));
     GetFileData();
   }, [FileId]);
 

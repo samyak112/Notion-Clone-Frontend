@@ -2,7 +2,9 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from 'react';
+import React, {
+  lazy, Suspense, useEffect, useState,
+} from 'react';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -13,6 +15,7 @@ import { DeleteOutlineOutlined, DriveFileRenameOutline, ContentCopy } from '@mui
 import Modal from '@mui/material/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
+import EmojiPicker from 'emoji-picker-react';
 import styles from './IndividualFiles.module.css';
 import Editor from '../Editor/Editor';
 import { CurrentFileId, CurrentFileName, LastUpdatedFileName } from '../../Redux/ExplorerSlice';
@@ -28,6 +31,7 @@ function IndividualFiles({ data, margin }) {
   const IconConfig = { IconSize: 'small', IconColor: '#5A5A57', ArrowColor: '#636363' };
   const { IconSize, IconColor, ArrowColor } = IconConfig;
 
+  const [ShowEmojiPicker, setShowEmojiPicker] = useState(false);
   const [expand, setexpand] = useState(false);
   const [ShowOptions, setShowOptions] = useState(false);
   const [NewFileOption, setNewFileOption] = useState(false);
@@ -40,6 +44,7 @@ function IndividualFiles({ data, margin }) {
   };
 
   const url = import.meta.env.VITE_URL;
+  const LazyEmojiPicker = lazy(() => import('emoji-picker-react'));
 
   const renderTooltip = (props) => (
     <Tooltip id="button-tooltip" {...props}>
@@ -81,6 +86,32 @@ function IndividualFiles({ data, margin }) {
     return CurrentFileDetails.FileName;
   }
 
+  function IconToRender() {
+    if (NewFileOption || _id !== FileId) {
+      return icon;
+    }
+    if (CurrentFileDetails.Icon === null) {
+      return '📄';
+    }
+    return CurrentFileDetails.Icon;
+  }
+
+  const UpdateIcon = async () => {
+    const res = await fetch(`${url}/FileData/icon`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth-token': localStorage.getItem('token'),
+      },
+      body: JSON.stringify({
+        FakeData: 'lol',
+      }),
+    });
+    const response = await res.json();
+    console.log(response);
+    // dispatch(CurrentFileName({ ...CurrentFileDetails, Icon: e.emoji }));
+  };
+
   return (
     <>
 
@@ -107,14 +138,27 @@ function IndividualFiles({ data, margin }) {
                   delay={{ show: 50, hide: 50 }}
                   overlay={renderTooltip}
                 >
-                  <div>
-                    {
-                    icon === null
-                      ? '📄'
-                      : icon
-                    }
+                  <div
+                    id={styles.emoji}
+                    onClick={(e) => { e.preventDefault(); setShowEmojiPicker(true); }}
+                  >
+                    {IconToRender()}
                   </div>
                 </OverlayTrigger>
+
+                <Suspense fallback={<div />}>
+                  {ShowEmojiPicker && (
+                  <div id={styles.emoji_picker}>
+                    <LazyEmojiPicker
+                      onEmojiClick={(e) => {
+                      // setShowEmojiPicker(false);
+                        dispatch(CurrentFileName({ ...CurrentFileDetails, Icon: e.emoji }));
+                      }}
+                    />
+                  </div>
+                  )}
+                </Suspense>
+
               </div>
               <div style={FileId === _id ? { color: 'black' } : {}}>
                 {FileNameToRender()}

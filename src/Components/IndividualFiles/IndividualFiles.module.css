@@ -29,6 +29,20 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
+  /* .edit_file_option{
+    position: relative;
+  } */
+
+  #emoji{
+    position: relative;
+  }
+
+  #emoji_picker{
+    position: absolute;
+    /* bottom: 10rem; */
+    z-index: 1;
+}
   
   .right_comps{
     display: flex;
