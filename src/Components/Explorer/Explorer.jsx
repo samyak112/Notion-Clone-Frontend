@@ -17,6 +17,8 @@ function Explorer({ FileData }) {
   const dispatch = useDispatch();
   const ExplorerWidth = useSelector((state) => state.ExplorerDetails.value);
   const IsTracking = useSelector((state) => state.ExplorerDetails.tracker);
+  const CurrentFileId = useSelector((state) => state.ExplorerDetails.current_id);
+
   function IntializeTracking() {
     dispatch(StartTracking(true));
   }

@@ -35,8 +35,6 @@ function FileEditArea() {
   };
 
   useEffect(() => {
-    // dispatch(CurrentFileName({ ...CurrentFileDetails , CurrentCoverPhoto }));
-    // dispatch(LastUpdatedFileName({ FileName, Icon: icon }));
     GetFileData();
   }, [FileId]);
 
@@ -57,7 +55,7 @@ function FileEditArea() {
       onMouseMove={ExtendExplorer}
     >
       <div id={styles.file_details}>File details here</div>
-      <Editor IndividualFileData={IndividualFileData} />
+      <Editor IndividualFileData={IndividualFileData} source="old" />
     </div>
   );
 }

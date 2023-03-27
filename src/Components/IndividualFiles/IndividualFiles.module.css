@@ -30,19 +30,23 @@
     text-overflow: ellipsis;
   }
 
-  /* .edit_file_option{
-    position: relative;
-  } */
-
-  #emoji{
-    position: relative;
-  }
-
   #emoji_picker{
     position: absolute;
-    /* bottom: 10rem; */
     z-index: 1;
 }
+
+#file_name{
+  color: #888886;
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+/* #file_name input:focus{
+  outline: none;
+  border: 0px solid black;
+} */
+
   
   .right_comps{
     display: flex;

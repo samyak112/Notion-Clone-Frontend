@@ -1,3 +1,7 @@
+/* eslint-disable no-console */
+/* eslint-disable no-lonely-if */
+/* eslint-disable keyword-spacing */
+/* eslint-disable no-else-return */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react/jsx-props-no-spreading */
@@ -15,88 +19,55 @@ import { DeleteOutlineOutlined, DriveFileRenameOutline, ContentCopy } from '@mui
 import Modal from '@mui/material/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
-import EmojiPicker from 'emoji-picker-react';
 import styles from './IndividualFiles.module.css';
 import Editor from '../Editor/Editor';
-import { CurrentFileId, CurrentFileName, LastUpdatedFileName } from '../../Redux/ExplorerSlice';
+import {
+  ChangeCurrentFileId, CurrentFileName, InitialFileName, ReloadData,
+} from '../../Redux/ExplorerSlice';
 
 function IndividualFiles({ data, margin }) {
   const { FileName, _id, icon } = data;
-
   const dispatch = useDispatch();
   const { FileId } = useParams();
 
   const CurrentFileDetails = useSelector((state) => state.ExplorerDetails.CurrentValue);
+  const CurrentFileId = useSelector((state) => state.ExplorerDetails.current_id);
+  const IsReload = useSelector((state) => state.ExplorerDetails.IsReload);
 
   const IconConfig = { IconSize: 'small', IconColor: '#5A5A57', ArrowColor: '#636363' };
   const { IconSize, IconColor, ArrowColor } = IconConfig;
 
-  const [ShowEmojiPicker, setShowEmojiPicker] = useState(false);
+  // To expand sub folders
   const [expand, setexpand] = useState(false);
+  // to open the options Box
   const [ShowOptions, setShowOptions] = useState(false);
   const [NewFileOption, setNewFileOption] = useState(false);
-  const [show, setShow] = useState(false);
+  const [ShowEmojiPicker, setShowEmojiPicker] = useState(false);
   const handleClose = () => {
-    setShow(false);
     setNewFileOption(false);
     dispatch(CurrentFileName({ FileName, Icon: icon }));
-    dispatch(LastUpdatedFileName({ FileName, Icon: icon }));
   };
 
-  const url = import.meta.env.VITE_URL;
   const LazyEmojiPicker = lazy(() => import('emoji-picker-react'));
 
-  const renderTooltip = (props) => (
-    <Tooltip id="button-tooltip" {...props}>
-      Change Icon
-    </Tooltip>
-  );
+  const url = import.meta.env.VITE_URL;
 
-  const AddFile = async () => {
-    const res = await fetch(`${url}/AddFile`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-auth-token': localStorage.getItem('token'),
-      },
-      body: JSON.stringify({
-        FakeData: 'lol',
-      }),
-    });
-    const response = await res.json();
-    console.log(response);
-  };
+  // const AddFile = async () => {
+  //   const res = await fetch(`${url}/AddFile`, {
+  //     method: 'PUT',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'x-auth-token': localStorage.getItem('token'),
+  //     },
+  //     body: JSON.stringify({
+  //       FakeData: 'lol',
+  //     }),
+  //   });
+  //   const response = await res.json();
+  //   console.log(response);
+  // };
 
-  useEffect(() => {
-    if (_id === FileId) {
-      if (!NewFileOption) {
-        dispatch(CurrentFileName({ FileName, Icon: icon }));
-        dispatch(LastUpdatedFileName({ FileName, Icon: icon }));
-      }
-    }
-  }, [FileId]);
-
-  function FileNameToRender() {
-    if (NewFileOption || _id !== FileId) {
-      return FileName;
-    }
-    if (CurrentFileDetails.FileName === '') {
-      return 'Untitled';
-    }
-    return CurrentFileDetails.FileName;
-  }
-
-  function IconToRender() {
-    if (NewFileOption || _id !== FileId) {
-      return icon;
-    }
-    if (CurrentFileDetails.Icon === null) {
-      return '📄';
-    }
-    return CurrentFileDetails.Icon;
-  }
-
-  const UpdateIcon = async () => {
+  const UpdateIcon = async (Icon) => {
     const res = await fetch(`${url}/FileData/icon`, {
       method: 'PUT',
       headers: {
@@ -104,13 +75,62 @@ function IndividualFiles({ data, margin }) {
         'x-auth-token': localStorage.getItem('token'),
       },
       body: JSON.stringify({
-        FakeData: 'lol',
+        FileId: _id, Icon,
       }),
     });
     const response = await res.json();
-    console.log(response);
-    // dispatch(CurrentFileName({ ...CurrentFileDetails, Icon: e.emoji }));
+    if(response.status === 200) {
+      dispatch(ReloadData(true));
+    }
   };
+
+  useEffect(() => {
+    if (_id === FileId) {
+      if (!NewFileOption) {
+        dispatch(InitialFileName({ FileName, Icon: icon }));
+        dispatch(CurrentFileName({ FileName, Icon: icon }));
+      }
+      dispatch(ChangeCurrentFileId(_id));
+    }
+  }, [FileId]);
+
+  // function FileDetailsToRender() {
+  //   console.log(_id);
+  //   if (NewFileOption || _id !== FileId) {
+  //     if(CurrentFileId === _id) {
+  //       console.log('id !== FileId && CurrentFileId === _id');
+  //       return { fileName: CurrentFileDetails.FileName, Icon: CurrentFileDetails.Icon };
+  //     } else{
+  //       console.log('id !== FileId && CurrentFileId !== _id');
+  //       return { fileName: FileName, Icon: icon };
+  //     }
+  //   }
+  //   if (CurrentFileDetails.FileName === '') {
+  //     return { fileName: 'Untitled', Icon: '📄' };
+  //   } else {
+  //     if(CurrentFileId === _id) {
+  //       console.log('id === FileId && CurrentFileId === _id');
+  //       return { fileName: CurrentFileDetails.FileName, Icon: CurrentFileDetails.Icon };
+  //     } else {
+  //       console.log('id === FileId && CurrentFileId !== _id');
+
+  //       return { fileName: FileName, Icon: icon };
+  //     }
+  //   }
+  // }
+
+  function FileDetailsToRender() {
+    if(NewFileOption === true || (CurrentFileId !== _id && NewFileOption === false)) {
+      return { fileName: FileName, Icon: icon };
+    } else if(CurrentFileId === _id && NewFileOption === false) {
+      return { fileName: CurrentFileDetails.FileName, Icon: CurrentFileDetails.Icon };
+    } else if(CurrentFileDetails.FileName === '') {
+      return { fileName: 'Untitled', Icon: '📄' };
+    }
+  }
+
+  const FileDetails = FileDetailsToRender();
+  const { fileName, Icon } = FileDetails;
 
   return (
     <>
@@ -119,7 +139,11 @@ function IndividualFiles({ data, margin }) {
         {/* this div used to cover the whole page when user is checking the options
         it is not visible tho but stops users from clicking anywhere else */}
         <div className={styles.overlay_container} style={ShowOptions ? { width: '100vw', height: '100vh' } : { width: '0vw', height: '0vh' }} onClick={() => { setShowOptions(!ShowOptions); }} />
-        <Link to={`/${_id}`} id={styles.file_link}>
+        <Link
+          to={`/${_id}`}
+          onClick={() => { console.log('this is running from event bubbling too'); }}
+          id={styles.file_link}
+        >
           <div className={styles.individual_doc} style={{ marginLeft: `${margin}rem` }}>
             <div className={styles.left_comps}>
               <div
@@ -133,38 +157,45 @@ function IndividualFiles({ data, margin }) {
                 }
               </div>
               <div className={styles.edit_file_option}>
-                <OverlayTrigger
-                  placement="bottom"
-                  delay={{ show: 50, hide: 50 }}
-                  overlay={renderTooltip}
+                <span
+                  id={styles.emoji}
+                  onClick={(e) => {
+                    // this prevent default stops the emoji picker
+                    // from flickering when you click on anything other than emojis
+                    e.preventDefault();
+                    if (e.target.nodeName === 'IMG' || e.target.nodeName === 'SPAN') {
+                      setShowEmojiPicker(!ShowEmojiPicker);
+                    }
+                  }}
                 >
-                  <div
-                    id={styles.emoji}
-                    onClick={(e) => { e.preventDefault(); setShowEmojiPicker(true); }}
-                  >
-                    {IconToRender()}
-                  </div>
-                </OverlayTrigger>
-
-                <Suspense fallback={<div />}>
-                  {ShowEmojiPicker && (
-                  <div id={styles.emoji_picker}>
-                    <LazyEmojiPicker
-                      onEmojiClick={(e) => {
-                      // setShowEmojiPicker(false);
-                        dispatch(CurrentFileName({ ...CurrentFileDetails, Icon: e.emoji }));
+                  {Icon}
+                  <Suspense fallback={<div />}>
+                    {ShowEmojiPicker && (
+                    <div
+                      id={styles.emoji_picker}
+                      onClick={(e) => {
+                        if (e.target.nodeName === 'IMG') {
+                          setShowEmojiPicker(false);
+                        }
                       }}
-                    />
-                  </div>
-                  )}
-                </Suspense>
+                    >
+                      <LazyEmojiPicker
+                        onEmojiClick={(e) => {
+                          dispatch(ChangeCurrentFileId(_id));
+                          dispatch(CurrentFileName({ FileName, Icon: e.emoji }));
+                          UpdateIcon(e.emoji);
+                        }}
+                      />
+                    </div>
+                    )}
+                  </Suspense>
+                </span>
 
               </div>
               <div style={FileId === _id ? { color: 'black' } : {}}>
-                {FileNameToRender()}
+                {fileName}
               </div>
             </div>
-
             <div
               className={styles.right_comps}
             >
@@ -183,13 +214,11 @@ function IndividualFiles({ data, margin }) {
                 </div>
                 <div id={styles.Note_options} className={`${styles.Note_options} ${styles.edit_file_option}`}>
                   <AddIcon
-                    onClick={() => {
+                    onClick={(e) => {
                       setNewFileOption(true);
                       setexpand(true);
-                      setShow(true);
-                      dispatch(CurrentFileId(_id));
-                      dispatch(CurrentFileName({ FileName: '', Icon: '' }));
-                      dispatch(LastUpdatedFileName({ FileName: '', Icon: '' }));
+                      dispatch(ChangeCurrentFileId(_id));
+                      dispatch(CurrentFileName({ FileName: '', Icon: '📄' }));
                     }}
                     fontSize={IconSize}
                     htmlColor={IconColor}
@@ -247,7 +276,7 @@ function IndividualFiles({ data, margin }) {
                     <KeyboardArrowRightIcon fontSize={IconSize} htmlColor={ArrowColor} />
                   </div>
                   <div className={styles.edit_file_option}>
-                    📄
+                    {CurrentFileDetails.Icon}
                   </div>
                   <div>
                     {
@@ -264,7 +293,7 @@ function IndividualFiles({ data, margin }) {
       </div>
 
       {
-        show
+        NewFileOption
           ? (
             <Modal
               open
@@ -274,7 +303,7 @@ function IndividualFiles({ data, margin }) {
               id={styles.modal}
             >
               <div id={styles.modal_wrap}>
-                <Editor />
+                <Editor source="new" />
               </div>
             </Modal>
 
