@@ -26,10 +26,6 @@
     cursor: text;
 }
 
-.element_value{
-    text-decoration: line-through rgba(55, 53, 47, 0.25);;
-}
-
 .content_blocks:focus{
     outline: none;
 }

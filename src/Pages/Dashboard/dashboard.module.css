@@ -39,3 +39,8 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #555; 
   }
+/* } else if (ElementValue.length !== 0 && ElementValue !== '\u00A0') {
+    //   UpdateBlocks({ IsNewBlock: true, index, value: '\u00A0' });
+    // } else {
+    //   setOpenBlockStyleOptions({ ...OpenBlockStyleOptions, state: !OpenBlockStyleOptions.state });
+    // } */

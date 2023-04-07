@@ -14,13 +14,16 @@ import { ChangeTrackingDetails } from '../../Redux/ElementTrack';
 import BlockStyles from './BlockStyle';
 import BlockOptionsData from './BlockOptionsData';
 
-function Blocks({ BlockData, UpdateBlocks, DeleteBlock }) {
+function Blocks({
+  BlockData, UpdateBlocks, DeleteBlock, UpdateBlockStyle,
+}) {
   const dispatch = useDispatch();
   const { BasicBlocks, BlockColors, BlockBackground } = BlockOptionsData;
 
   // Props data
   const { index, elem } = BlockData;
   const { value, style, _id } = elem;
+  console.log(elem);
 
   // states
   const DraggingDetails = useSelector((state) => state.TrackingDetails.DraggingDetails);
@@ -42,7 +45,6 @@ function Blocks({ BlockData, UpdateBlocks, DeleteBlock }) {
   }
 
   function TrackDraggedElement(ElementLocation) {
-    console.log({ current, ElementLocation });
     dispatch(ChangeTrackingDetails({ key: 'current', value: ElementLocation }));
     if (current > ElementLocation) {
       if (direction !== 'up') {
@@ -113,7 +115,7 @@ function Blocks({ BlockData, UpdateBlocks, DeleteBlock }) {
       if (IsEdited.current === true) {
         // console.log('entered here bitch');
         const payload = {
-          _id, value: e.target.innerText, index, IsNewBlock: false,
+          _id, value: e.target.innerText, index, IsNewBlock: false, style,
         };
         if (ElementValue.length !== value.length) {
           // if the length is different then we dont need to check for changes because different
@@ -152,22 +154,39 @@ function Blocks({ BlockData, UpdateBlocks, DeleteBlock }) {
           e.preventDefault();
           if (style === 'to_do_list') {
             UpdateBlocks({
-              IsNewBlock: true, index, value: '\u00A0', style: 'to_do_list', isChecked: true,
+              IsNewBlock: true, index, style: 'to_do_list', isChecked: true,
             });
           } else {
             UpdateBlocks({
-              IsNewBlock: true, index, value: '\u00A0', style: 'text',
+              IsNewBlock: true, index, style: 'text',
             });
           }
         }
       } else {
         UpdateBlocks({
-          IsNewBlock: true, index, value: '\u00A0', style: 'text',
+          IsNewBlock: true, index, style: 'text',
         });
       }
     } else if (source === 'Add') {
-      setOpenBlockStyleOptions({ ...OpenBlockStyleOptions, state: !OpenBlockStyleOptions.state });
+      if (!OpenBlockStyleOptions.state) {
+        setOpenBlockStyleOptions({ ...OpenBlockStyleOptions, state: true });
+      }
     }
+  }
+
+  function ChangeBlockStyle(BlockValue, CurrentStyle) {
+    let payload = null;
+    if (BlockValue === 'to_do_list') {
+      payload = {
+        IsNewBlock: false, isChecked: false, style: BlockValue, index, value: ElementValue, _id,
+      };
+    } else {
+      payload = {
+        IsNewBlock: false, style: BlockValue, index, value: ElementValue, _id,
+      };
+    }
+    UpdateBlockStyle(payload);
+    // const payload = { _id, IsNewBlock: true };
   }
 
   function UpdateCheckbox(e) {
@@ -211,9 +230,9 @@ function Blocks({ BlockData, UpdateBlocks, DeleteBlock }) {
         onDragEnd={() => { StopDragging(); }}
         onBlur={(e) => {
           UpdateBlockValue(e);
-          CloseOptions();
+          // CloseOptions();
         }}
-        onClick={() => { CloseOptions(); }}
+        // onClick={() => { CloseOptions(); }}
         onInput={HandleInput}
         onKeyDown={(e) => { AddNewBlock('Enter', e); }}
       >
@@ -241,14 +260,20 @@ function Blocks({ BlockData, UpdateBlocks, DeleteBlock }) {
       {/* Block Design Options div */}
       <div
         id={styles.block_options}
-        style={OpenBlockStyleOptions.state ? { display: 'block' } : { display: 'none' }}
+        style={OpenBlockStyleOptions.state ? { display: 'block', fontSize: '1rem' } : { display: 'none' }}
       >
         <div className={styles.option_heading}>
           Basic Block
         </div>
         {
           BasicBlocks.map((item) => (
-            <div className={styles.basic_block}>
+            <div
+              className={styles.basic_block}
+              onClick={() => {
+                ChangeBlockStyle(item.value, style);
+                setOpenBlockStyleOptions({ ...OpenBlockStyleOptions, state: false });
+              }}
+            >
               <div className={styles.block_icon}>
                 {' '}
                 <img id={styles.actual_image} src={item.icon} alt="" />

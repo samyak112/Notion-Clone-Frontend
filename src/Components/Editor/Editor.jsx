@@ -138,7 +138,9 @@ function Editor({ IndividualFileData, source }) {
   // console.log(blocks);
 
   function UpdateBlocks(payload, type = 'default') {
-    const { index, value, IsNewBlock } = payload;
+    const {
+      index, value, IsNewBlock, style,
+    } = payload;
 
     if (IsNewBlock === false) {
       const newArray = [...blocks];
@@ -154,17 +156,25 @@ function Editor({ IndividualFileData, source }) {
     } else {
       const newArray = [...blocks];
       // this value is a non-breaking space character
-      // didnt destrcutred style because it wont be available when the block is not new
-      newArray.splice(index + 1, 0, { _id: uuidv4(), value: '\u00A0', style: payload.style });
+      newArray.splice(index + 1, 0, { _id: uuidv4(), value: '\u00A0', style });
       setblocks(newArray);
     }
   }
 
+  function UpdateBlockStyle(payload) {
+    const newArray = [...blocks];
+    newArray[payload.index] = payload;
+    setblocks(newArray);
+  }
+
   function DeleteBlock(payload) {
     const newArray = [...blocks];
+    // payload is the index here
     newArray.splice(payload, 1);
     setblocks(newArray);
   }
+
+  console.log(blocks);
 
   function save_details() {
     console.log('save details');
@@ -284,6 +294,7 @@ function Editor({ IndividualFileData, source }) {
                   BlockData={{ elem, index }}
                   UpdateBlocks={UpdateBlocks}
                   DeleteBlock={DeleteBlock}
+                  UpdateBlockStyle={UpdateBlockStyle}
                 />
               ))
               : (
