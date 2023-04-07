@@ -94,31 +94,6 @@ function IndividualFiles({ data, margin }) {
     }
   }, [FileId]);
 
-  // function FileDetailsToRender() {
-  //   console.log(_id);
-  //   if (NewFileOption || _id !== FileId) {
-  //     if(CurrentFileId === _id) {
-  //       console.log('id !== FileId && CurrentFileId === _id');
-  //       return { fileName: CurrentFileDetails.FileName, Icon: CurrentFileDetails.Icon };
-  //     } else{
-  //       console.log('id !== FileId && CurrentFileId !== _id');
-  //       return { fileName: FileName, Icon: icon };
-  //     }
-  //   }
-  //   if (CurrentFileDetails.FileName === '') {
-  //     return { fileName: 'Untitled', Icon: '📄' };
-  //   } else {
-  //     if(CurrentFileId === _id) {
-  //       console.log('id === FileId && CurrentFileId === _id');
-  //       return { fileName: CurrentFileDetails.FileName, Icon: CurrentFileDetails.Icon };
-  //     } else {
-  //       console.log('id === FileId && CurrentFileId !== _id');
-
-  //       return { fileName: FileName, Icon: icon };
-  //     }
-  //   }
-  // }
-
   function FileDetailsToRender() {
     if(NewFileOption === true || (CurrentFileId !== _id && NewFileOption === false)) {
       return { fileName: FileName, Icon: icon };
@@ -141,7 +116,7 @@ function IndividualFiles({ data, margin }) {
         <div className={styles.overlay_container} style={ShowOptions ? { width: '100vw', height: '100vh' } : { width: '0vw', height: '0vh' }} onClick={() => { setShowOptions(!ShowOptions); }} />
         <Link
           to={`/${_id}`}
-          onClick={() => { console.log('this is running from event bubbling too'); }}
+          // onClick={() => { console.log('this is running from event bubbling too'); }}
           id={styles.file_link}
         >
           <div className={styles.individual_doc} style={{ marginLeft: `${margin}rem` }}>
@@ -303,7 +278,9 @@ function IndividualFiles({ data, margin }) {
               id={styles.modal}
             >
               <div id={styles.modal_wrap}>
-                <Editor source="new" />
+                {/* added this IndividualFileData prop so
+                that editor can use the default props from there */}
+                <Editor source="new" IndividualFileData={{ CoverPhoto: null, values: [] }} />
               </div>
             </Modal>
 

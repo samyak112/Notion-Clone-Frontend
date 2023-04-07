@@ -13,7 +13,7 @@ function FileEditArea() {
   const IsTracking = useSelector((state) => state.ExplorerDetails.tracker);
   const { FileId } = useParams();
   const url = import.meta.env.VITE_URL;
-  const [IndividualFileData, setIndividualFileData] = useState({ CoverPhoto: null, values: null });
+  const [IndividualFileData, setIndividualFileData] = useState({ CoverPhoto: null, values: []});
 
   function StopTracking() {
     dispatch(StartTracking(false));

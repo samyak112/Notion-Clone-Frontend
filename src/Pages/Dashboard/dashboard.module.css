@@ -7,6 +7,35 @@
   user-select: none;
 }
 
+::-moz-selection { /* Code for Firefox */
+  background: rgba(35, 131, 226, 0.28);
+}
+
+::selection {
+  background: rgba(35, 131, 226, 0.28);
+}
+
+
 #editor{
   width: 100%;
 }
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888; 
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }

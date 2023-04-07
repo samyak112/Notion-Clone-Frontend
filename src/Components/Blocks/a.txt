@@ -1,0 +1,17 @@
+file:[
+    {
+        _id:'',
+        fileName:'1',
+        path:'1',
+        items:[
+            {
+                _id:'',
+                fileName:'1.1'
+            },
+            {
+                _id:'',
+                fileName:'1.2'
+            },
+        ]
+    }
+]

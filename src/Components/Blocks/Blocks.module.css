@@ -1,16 +1,37 @@
 .main{
-    /* display: flex;
+    display: flex;
+    align-items: center;
     position: relative;
-    height: 100%; */
-    /* border: 2px solid black; */
+    height: 100%;
+    /* border: 2px solid blue; */
 }
+
+.overlay_container{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    z-index: 1;
+    opacity:0;
+    cursor: default;
+  }
 
 .content_blocks{
     display: flex;
+    gap: 1rem;
     position: relative;
     width: 100%;
     padding-block: .2rem;
     cursor: text;
+}
+
+.element_value{
+    text-decoration: line-through rgba(55, 53, 47, 0.25);;
+}
+
+.content_blocks:focus{
+    outline: none;
 }
 
 .options{
@@ -19,13 +40,16 @@
     left: -3rem;
     color: rgb(202, 199, 199);
     cursor: grab;
+    display: flex;
+    height: 100%;
+    align-items: center;
 }
 
 .options:active{
     cursor: grabbing;
 }
 
-.content_blocks:hover > .options{
+.main:hover > .options{
     visibility: visible;
 }
 
@@ -37,6 +61,131 @@
     user-select: none;
     outline: none;
     background-color: transparent;
-    opacity: 1;
-    
+    opacity: 1;   
 }
+
+.content_blocks[placeholder]:empty:before {
+    content: attr(placeholder);
+    color: #555; 
+}
+
+.content_blocks[placeholder]:empty:focus:before {
+    /* added this non breaking character here because otherwise the height was getting 0 as the div was getting empty */
+    content: '\00a0';
+}
+
+#block_options{
+    position: absolute;
+    top: 2rem;
+    width: 20rem;
+    height: 17rem;
+    z-index: 1;
+    /* added the background color otherwise the back text was coming forward because of transparency */
+    background-color: white;
+    overflow-y: scroll;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 10%), 0 8px 16px rgb(0 0 0 / 10%);
+}
+
+.option_heading{
+    font-size: .8rem;
+    color: #b1aeae;
+    margin-inline: 1rem;
+    margin-top: 1rem;
+}
+
+.basic_block{
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+    /* height: 3rem; */
+    margin: .5rem;
+    padding-left: .4rem;
+    /* padding-block: .1rem; */
+    /* padding-bottom: 1rem; */
+    padding-block: .4rem;
+    position: relative;
+    cursor: pointer;
+    /* margin-bottom: 1rem; */
+    border-radius: 5px;
+}
+
+.basic_block:hover{
+    background-color: rgb(241, 239, 239);
+}
+
+.block_icon{
+    display: flex;
+    justify-content: center;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    border-radius: 5px;
+    border: 2px solid rgb(227, 217, 217);
+    /* height: 2rem; */
+}
+
+#actual_image{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    /* border: 2px solid black; */
+}
+
+.block_text{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: .5rem;
+}
+
+.description{
+    font-size: .9rem;
+    color: rgb(166, 148, 148);
+}
+
+.drag_options{
+    position: absolute;
+    left: -16rem;   
+    padding-inline: .2rem;
+    padding-top: .5rem;
+    width: 14rem;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 10%), 0 8px 16px rgb(0 0 0 / 10%);
+    border-radius: 5px;
+}
+
+.drag_options_comps{
+    display: flex;
+    padding-inline: .5rem;
+    padding-block: .3rem;
+    border-radius: 3px;
+    margin-block: .5rem;
+    gap: .5rem;
+    cursor: pointer;
+}
+
+.drag_options_comps:hover{
+    background-color: rgb(242, 241, 236);
+}
+
+
+#check_box {
+    position: relative;
+  }
+  
+  #check_box::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 15px;
+    height: 15px;
+    background-color: white;
+    border: 1px solid black;
+  }
+  
+  #check_box:checked::before {
+    background-color: blue;
+  }
+
+  

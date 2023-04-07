@@ -3,37 +3,53 @@
 /* eslint-disable no-else-return */
 /* eslint-disable no-underscore-dangle */
 import React, {
-  lazy, Suspense, useEffect, useState,
+  lazy, Suspense, useEffect, useRef, useState,
 } from 'react';
-import { ImageRounded, SentimentSatisfiedAlt } from '@mui/icons-material';
+import {
+  ImageRounded, SentimentSatisfiedAlt, Add, DragIndicator,
+} from '@mui/icons-material';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
+import DescriptionIcon from '@mui/icons-material/Description';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
+// import { useParams } from 'react-router-dom';
 import styles from './Editor.module.css';
 import { InitialFileName, ChangeCurrentFileId, CurrentFileName } from '../../Redux/ExplorerSlice';
+// import BlockStyles from '../Blocks/BlockStyle';
+
 import Blocks from '../Blocks/Blocks';
 
 function Editor({ IndividualFileData, source }) {
+  // redux
   const CurrentFileDetails = useSelector((state) => state.ExplorerDetails.CurrentValue);
   const InitialFileDetails = useSelector((state) => state.ExplorerDetails.InitialValues);
   const CurrentFileId = useSelector((state) => state.ExplorerDetails.current_id);
 
-  const [blocks, setblocks] = useState(null);
+  // states
+  const [blocks, setblocks] = useState([]);
   const [CurrentCoverPhoto, setCurrentCoverPhoto] = useState(null);
   const [ShowEmojiPicker, setShowEmojiPicker] = useState(false);
+  // const [CurrentEditedBlock, setCurrentEditedBlock] = useState({
+  //   _id: null, value: null, style: null,
+  // });
   const [DraggingDetails, setDraggingDetails] = useState({
     Started: false, source: null, destination: null, current: null, direction: null,
   });
 
+  // ref
+  // this ref is maintainted to check if the block which is being edited is the first block
+  // or not , this maintained for the logic which is being used to save the blocks
+  // const IsInitialBlock = useRef(true);
+
+  // destructured props
   const { FileName, Icon } = CurrentFileDetails;
   const { CoverPhoto, values, ref_id } = IndividualFileData;
-
   // const { FileId } = useParams();
   const dispatch = useDispatch();
-  useEffect(() => {
-    setblocks(values);
-  }, [values]);
+  // useEffect(() => {
+  //   setblocks(values);
+  // }, [values]);
 
   // useEffect(() => {
   //   if (CurrentFileId !== ref_id) {
@@ -58,13 +74,6 @@ function Editor({ IndividualFileData, source }) {
   }
 
   function FileDetailsToRender() {
-    // if (CurrentFileId === ref_id) {
-    //   console.log('dynamic');
-    //   return { fileName: FileName, icon: Icon };
-    // } else {
-    //   console.log('static');
-    //   return { fileName: InitialFileDetails.FileName, icon: InitialFileDetails.Icon };
-    // }
     if (source === 'new') {
       return { fileName: FileName, icon: Icon };
     } else {
@@ -79,15 +88,92 @@ function Editor({ IndividualFileData, source }) {
   const RenderedFileDetails = FileDetailsToRender();
   const { fileName, icon } = RenderedFileDetails;
 
-  // function IconToRender() {
-  //   if (CurrentFileId !== ref_id) {
-  //     return Icon;
+  // function AddBlock() {
+
+  // }
+
+  // function StyleToRender(elem) {
+  //   if (CurrentEditedBlock._id === null) {
+  //     return BlockStyles[0][elem.style].style;
+  //   } else if (CurrentEditedBlock._id === elem._id) {
+  //     // console.log('hahah');
+  //     return BlockStyles[0][CurrentEditedBlock.style].style;
+  //   }
+  //   // else {
+  //   //   console.log('aads');
+  //   // }
+  // }
+
+  // function ContentToRender(elem) {
+  //   if (CurrentEditedBlock._id === null) {
+  //     return elem.value;
+  //   } else if (CurrentEditedBlock._id === elem._id) {
+  //     // console.log('using this one');
+  //     return CurrentEditedBlock.value;
   //   }
   // }
-  // console.log('rendering is too much right now')
+
+  // function OnChangeHandler(e, elem) {
+  //   const value = e.target.outerText;
+  //   const { _id } = CurrentEditedBlock;
+  //   var IsNewId = false;
+  //   if (_id !== elem._id) {
+  //     console.log('this did ran');
+  //     IsNewId = true;
+  //     // setCurrentEditedBlock(elem);
+  //   }
+  //   if (value.length === 0) {
+  //     console.log('naah this did');
+  //     // TempVal.value = ' ';
+  //     setCurrentEditedBlock({ ...CurrentEditedBlock, value: ' ' });
+  //   } else if (value.length !== 0) {
+  //     // T/empVal.value = value;
+  //   }
+  //   console.log(IsNewId, 'this is the boolean');
+  //   setCurrentEditedBlock({ ...CurrentEditedBlock, value });
+  // }
+
+  // console.log(CurrentEditedBlock);
+
+  // console.log(blocks);
+
+  function UpdateBlocks(payload, type = 'default') {
+    const { index, value, IsNewBlock } = payload;
+
+    if (IsNewBlock === false) {
+      const newArray = [...blocks];
+
+      if (type === 'checkbox') {
+        // console.log(type);
+        newArray[index].isChecked = payload.isChecked;
+        // setblocks(newArray);
+      } else {
+        newArray[index].value = value;
+      }
+      setblocks(newArray);
+    } else {
+      const newArray = [...blocks];
+      // this value is a non-breaking space character
+      // didnt destrcutred style because it wont be available when the block is not new
+      newArray.splice(index + 1, 0, { _id: uuidv4(), value: '\u00A0', style: payload.style });
+      setblocks(newArray);
+    }
+  }
+
+  function DeleteBlock(payload) {
+    const newArray = [...blocks];
+    newArray.splice(payload, 1);
+    setblocks(newArray);
+  }
+
+  function save_details() {
+    console.log('save details');
+  }
+
+  // console.log(blocks, 'these are the blocks');
+
   return (
     <div id={styles.main}>
-
       <div id={styles.top}>
         <div id={styles.cover_photo} style={CoverPhoto == null && CurrentCoverPhoto === null ? { height: '8rem' } : { height: '14rem' }}>
           <div id={styles.cover_image_wrap} style={CoverPhoto == null && CurrentCoverPhoto === null ? { display: 'none' } : { display: 'block' }}>
@@ -105,6 +191,7 @@ function Editor({ IndividualFileData, source }) {
           </div>
         </div>
         <div id={styles.centered_area_wrap}>
+          <button type="button" onClick={() => { save_details(); }} id={styles.save_button}>save</button>
           <div id={styles.centered_area_inner_wrap}>
             <div id={styles.emoji} onClick={() => { setShowEmojiPicker(true); }}>{icon}</div>
             {/* this div used to cover the whole page when user is checking the options
@@ -121,7 +208,9 @@ function Editor({ IndividualFileData, source }) {
                 <LazyEmojiPicker
                   onEmojiClick={(e) => {
                     dispatch(ChangeCurrentFileId(ref_id));
-                    dispatch(CurrentFileName({ ...CurrentFileDetails, Icon: e.emoji }));
+                    dispatch(CurrentFileName({
+                      FileName: InitialFileDetails.FileName, Icon: e.emoji,
+                    }));
                     setShowEmojiPicker(false);
                   }}
                 />
@@ -188,12 +277,58 @@ function Editor({ IndividualFileData, source }) {
           </div>
           <div className={styles.editor_comps} id={styles.content}>
             {
-            blocks != null
+            blocks.length !== 0
               ? blocks.map((elem, index) => (
-                <Blocks key={elem._id} BlockData={{ index: elem.index, value: elem.value }} />
+                <Blocks
+                  key={elem._id}
+                  BlockData={{ elem, index }}
+                  UpdateBlocks={UpdateBlocks}
+                  DeleteBlock={DeleteBlock}
+                />
               ))
-              : ''
+              : (
+                <div
+                  id={styles.add_first_block}
+                  onClick={() => {
+                    setblocks([{
+                      _id: uuidv4(), value: '\u00A0', style: 'to_do_list', isChecked: true,
+                    }]);
+                  }}
+                >
+                  <div id={styles.icon}><DescriptionIcon /></div>
+                  <div id={styles.text}>Add New Block</div>
+                </div>
+              )
+
             }
+            {/* {
+              blocks != null
+                ? blocks.map((elem) => (
+
+                  <div
+                    className={styles.content_blocks}
+                    style={StyleToRender(elem)}
+                    placeholder={BlockStyles[0][elem.style].name}
+                    contentEditable
+                    onInput={(e) => { OnChangeHandler(e, elem); }}
+
+                  >
+                    <div
+                      className={styles.options_wrap}
+                    >
+                      <Add className={styles.options} onClick={() => { AddBlock(elem.value); }} />
+                      <DragIndicator className={styles.options} />
+                    </div>
+
+                    {
+                    elem.value === ''
+                      ? <div placeholder="Press '/' for commands">&nbsp;</div>
+                      : <div>{ContentToRender(elem)}</div>
+                    }
+                  </div>
+                ))
+                : ''
+            } */}
           </div>
         </div>
       </div>
@@ -204,7 +339,7 @@ function Editor({ IndividualFileData, source }) {
 Editor.defaultProps = {
   IndividualFileData: {
     CoverPhoto: null,
-    values: [{ value: '' }],
+    values: [{ value: '\u00A0', style: 'text' }],
   },
 };
 
