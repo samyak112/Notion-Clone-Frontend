@@ -155,8 +155,12 @@ function Editor({ IndividualFileData, source }) {
       setblocks(newArray);
     } else {
       const newArray = [...blocks];
-      // this value is a non-breaking space character
-      newArray.splice(index + 1, 0, { _id: uuidv4(), value: '\u00A0', style });
+      if (payload.IsDuplicate) {
+        newArray.splice(index + 1, 0, { _id: uuidv4(), value, style });
+      } else {
+        // this value is a non-breaking space character
+        newArray.splice(index + 1, 0, { _id: uuidv4(), value: '\u00A0', style });
+      }
       setblocks(newArray);
     }
   }
@@ -302,7 +306,7 @@ function Editor({ IndividualFileData, source }) {
                   id={styles.add_first_block}
                   onClick={() => {
                     setblocks([{
-                      _id: uuidv4(), value: '\u00A0', style: 'to_do_list', isChecked: true,
+                      _id: uuidv4(), value: '\u00A0', style: 'bullet_list',
                     }]);
                   }}
                 >

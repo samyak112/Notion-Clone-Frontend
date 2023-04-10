@@ -30,7 +30,13 @@ const BlockStyles = [{
     style: {
       fontSize: '1em',
     },
-    name: 'Text',
+    name: 'to_do_list',
+  },
+  bullet_list: {
+    style: {
+      fontSize: '1em',
+    },
+    name: 'bullet_list',
   },
 }];
 

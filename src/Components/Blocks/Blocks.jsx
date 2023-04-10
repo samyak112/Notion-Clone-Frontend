@@ -9,7 +9,10 @@ import diff from 'fast-diff';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import ImportExportOutlinedIcon from '@mui/icons-material/ImportExportOutlined';
-import FormatPaintOutlinedIcon from '@mui/icons-material/FormatPaintOutlined'; import styles from './Blocks.module.css';
+import FormatPaintOutlinedIcon from '@mui/icons-material/FormatPaintOutlined'; import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import styles from './Blocks.module.css';
 import { ChangeTrackingDetails } from '../../Redux/ElementTrack';
 import BlockStyles from './BlockStyle';
 import BlockOptionsData from './BlockOptionsData';
@@ -23,7 +26,6 @@ function Blocks({
   // Props data
   const { index, elem } = BlockData;
   const { value, style, _id } = elem;
-  console.log(elem);
 
   // states
   const DraggingDetails = useSelector((state) => state.TrackingDetails.DraggingDetails);
@@ -148,23 +150,27 @@ function Blocks({
   }
 
   function AddNewBlock(source, e) {
-    if (ElementValue.length !== 0 && ElementValue !== '\u00A0') {
+    if (source === 'Duplicate') {
+      UpdateBlocks({
+        IsNewBlock: true, IsDuplicate: true, value: ElementValue, index, style,
+      });
+    } else if (ElementValue.length !== 0 && ElementValue !== '\u00A0') {
       if (source === 'Enter') {
         if (e.code === 'Enter' && e.shiftKey === false) {
           e.preventDefault();
           if (style === 'to_do_list') {
             UpdateBlocks({
-              IsNewBlock: true, index, style: 'to_do_list', isChecked: true,
+              IsNewBlock: true, IsDuplicate: false, index, style: 'to_do_list', isChecked: true,
             });
           } else {
             UpdateBlocks({
-              IsNewBlock: true, index, style: 'text',
+              IsNewBlock: true, IsDuplicate: false, index, style,
             });
           }
         }
       } else {
         UpdateBlocks({
-          IsNewBlock: true, index, style: 'text',
+          IsNewBlock: true, IsDuplicate: false, index, style: 'text',
         });
       }
     } else if (source === 'Add') {
@@ -228,10 +234,7 @@ function Blocks({
         onDragStart={() => { InitiateDragging(index); }}
         onDragEnter={() => { TrackDraggedElement(index); }}
         onDragEnd={() => { StopDragging(); }}
-        onBlur={(e) => {
-          UpdateBlockValue(e);
-          // CloseOptions();
-        }}
+        onBlur={(e) => { UpdateBlockValue(e); }}
         // onClick={() => { CloseOptions(); }}
         onInput={HandleInput}
         onKeyDown={(e) => { AddNewBlock('Enter', e); }}
@@ -241,19 +244,39 @@ function Blocks({
           style === 'to_do_list'
             ? (
               <>
-                <div contentEditable={false}>
-                  <input onClick={(e) => { UpdateCheckbox(e); }} type="checkbox" id={styles.check_box} name="checkbox" />
+                {/* added content editable false in checkbox so that block gets
+                deleted when the checkmark is tried to be removed */}
+                <div className={styles.checkbox_wrap}>
+                  <Checkbox
+                    style={{ height: 'fit-content', padding: '0px' }}
+                    onClick={(e) => { UpdateCheckbox(e); }}
+                    checked={elem.isChecked}
+                    contentEditable={false}
+                  />
+                  <div
+                    style={
+                      elem.isChecked
+                        ? { textDecoration: 'line-through rgba(55, 53, 47, 0.25)' }
+                        : { textDecoration: 'none' }
+                      }
+                    className={styles.element_value}
+                  >
+                    {value}
+                  </div>
                 </div>
-                <label htmlFor="check_box" className={styles.element_value} style={elem.isChecked ? { textDecoration: 'line-through rgba(55, 53, 47, 0.25)' } : { textDecoration: 'none' }}>
-                  {value}
-                </label>
               </>
             )
-            : (
-              <div className={styles.element_value}>
-                {value}
-              </div>
-            )
+            : style === 'bullet_list'
+              ? (
+                <ul className={styles.bullet}>
+                  <li className={styles.element_value}>{value}</li>
+                </ul>
+              )
+              : (
+                <div className={styles.element_value}>
+                  {value}
+                </div>
+              )
         }
       </div>
 
@@ -330,11 +353,11 @@ function Blocks({
         className={styles.drag_options}
         style={OpenBlockChangeOptions ? { display: 'block' } : { display: 'none' }}
       >
-        <div className={styles.drag_options_comps}>
+        <div className={styles.drag_options_comps} onClick={() => { DeleteBlock(index); }}>
           <div className={styles.drag_option_icon}><DeleteOutlineOutlinedIcon /></div>
           <div className={styles.drag_option_text}>Delete</div>
         </div>
-        <div className={styles.drag_options_comps}>
+        <div className={styles.drag_options_comps} onClick={(e) => { AddNewBlock('Duplicate', e); }}>
           <div className={styles.drag_option_icon}><ContentCopyOutlinedIcon /></div>
           <div className={styles.drag_option_text}>Duplicate</div>
         </div>

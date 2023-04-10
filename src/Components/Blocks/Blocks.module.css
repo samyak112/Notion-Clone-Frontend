@@ -19,11 +19,26 @@
 
 .content_blocks{
     display: flex;
-    gap: 1rem;
+    align-items: center;
+    /* gap: 1rem; */
     position: relative;
     width: 100%;
+    max-width: 45rem;
     padding-block: .2rem;
-    cursor: text;
+    cursor: text;    
+}
+
+.checkbox_wrap{
+    display: flex;
+    width: 100%;
+    position: relative;
+}
+
+.element_value{
+    /* display: flex; */
+    width: 100%;
+    word-wrap: break-word;
+    white-space: pre-line;
 }
 
 .content_blocks:focus{
@@ -36,9 +51,9 @@
     left: -3rem;
     color: rgb(202, 199, 199);
     cursor: grab;
-    display: flex;
+    /* display: flex; */
     height: 100%;
-    align-items: center;
+    /* align-items: center; */
 }
 
 .options:active{
@@ -142,6 +157,7 @@
 .drag_options{
     position: absolute;
     left: -16rem;   
+    z-index: 1;
     padding-inline: .2rem;
     padding-top: .5rem;
     width: 14rem;
@@ -163,25 +179,9 @@
     background-color: rgb(242, 241, 236);
 }
 
-
-#check_box {
-    position: relative;
-  }
-  
-  #check_box::before {
-    content: "";
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 15px;
-    height: 15px;
-    background-color: white;
-    border: 1px solid black;
-  }
-  
-  #check_box:checked::before {
-    background-color: blue;
-  }
-
-  
+.bullet{
+    margin: 0px;
+    padding-inline: 1.5rem;
+    display: flex;
+    width: inherit;
+}

@@ -162,54 +162,6 @@
     cursor: default;
   }
 
-  .content_blocks{
-    display: flex;
-    position: relative;
-    width: 100%;
-    height: 100%;
-    padding-block: .2rem;
-    cursor: text;
-}
-
-.content_blocks:focus{
-    outline: none;
-}
-
-.options_wrap{
-    visibility: hidden;
-    position: absolute;
-    left: -3rem;
-    color: rgb(202, 199, 199);
-    cursor: grab;
-}
-
-.options_wrap:active{
-    cursor: grabbing;
-}
-
-.options{
-    border-radius: 5px;
-}
-
-.options:hover{
-    background-color: rgb(234, 242, 242);
-}
-
-.content_blocks:hover > .options_wrap{
-    visibility: visible;
-}
-
-.content_blocks:active > .options_wrap{
-    color: white;
-}
-
-.content_blocks:active{
-    user-select: none;
-    outline: none;
-    background-color: transparent;
-    opacity: 1;   
-}
-
 #add_first_block{
     display: flex;
     gap: .5rem;
