@@ -1,6 +1,6 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable no-console */
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Add, DragIndicator } from '@mui/icons-material';
@@ -9,8 +9,7 @@ import diff from 'fast-diff';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import ImportExportOutlinedIcon from '@mui/icons-material/ImportExportOutlined';
-import FormatPaintOutlinedIcon from '@mui/icons-material/FormatPaintOutlined'; import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import FormatPaintOutlinedIcon from '@mui/icons-material/FormatPaintOutlined';
 import Checkbox from '@mui/material/Checkbox';
 import styles from './Blocks.module.css';
 import { ChangeTrackingDetails } from '../../Redux/ElementTrack';
@@ -25,7 +24,9 @@ function Blocks({
 
   // Props data
   const { index, elem } = BlockData;
-  const { value, style, _id } = elem;
+  const {
+    value, style, _id, color, bgcolor,
+  } = elem;
 
   // states
   const DraggingDetails = useSelector((state) => state.TrackingDetails.DraggingDetails);
@@ -81,6 +82,9 @@ function Blocks({
     const Currentvalue = e.target.innerText;
     const NodeName = e.target.nodeName;
     const CurrentChar = e.nativeEvent.data;
+
+    // had to speicfy IsEdited so that update block
+    // doesnot send data only because on blur was triggered
     if (IsEdited.current !== true) {
       IsEdited.current = true;
     }
@@ -93,8 +97,8 @@ function Blocks({
     if (CurrentChar === '/') {
       setOpenBlockStyleOptions({
         ...OpenBlockStyleOptions,
-        state: !OpenBlockStyleOptions.state,
-        IsSlashCommand: !OpenBlockStyleOptions.IsSlashCommand,
+        state: true,
+        IsSlashCommand: true,
       });
     }
 
@@ -112,10 +116,8 @@ function Blocks({
   }
 
   function UpdateBlockValue(e) {
-    // console.log(e)
     if (e.target.nodeName !== 'INPUT') {
       if (IsEdited.current === true) {
-        // console.log('entered here bitch');
         const payload = {
           _id, value: e.target.innerText, index, IsNewBlock: false, style,
         };
@@ -162,6 +164,10 @@ function Blocks({
             UpdateBlocks({
               IsNewBlock: true, IsDuplicate: false, index, style: 'to_do_list', isChecked: true,
             });
+          } else if (style === 'bullet_list') {
+            UpdateBlocks({
+              IsNewBlock: true, IsDuplicate: false, index, style: 'bullet_list',
+            });
           } else {
             UpdateBlocks({
               IsNewBlock: true, IsDuplicate: false, index, style,
@@ -180,7 +186,7 @@ function Blocks({
     }
   }
 
-  function ChangeBlockStyle(BlockValue, CurrentStyle) {
+  function ChangeBlockStyle(BlockValue) {
     let payload = null;
     if (BlockValue === 'to_do_list') {
       payload = {
@@ -193,6 +199,13 @@ function Blocks({
     }
     UpdateBlockStyle(payload);
     // const payload = { _id, IsNewBlock: true };
+  }
+
+  function ChangeBlockColor(ColorValue, type) {
+    UpdateBlocks({
+      ColorValue, index, IsNewBlock: false, value, _id,
+    }, type);
+    setOpenBlockStyleOptions({ ...OpenBlockStyleOptions, state: false });
   }
 
   function UpdateCheckbox(e) {
@@ -229,15 +242,15 @@ function Blocks({
       <div
         className={styles.content_blocks}
         placeholder={BlockStyles[0][style].name === 'Text' ? 'Press / for commands' : BlockStyles[0][style].name}
-        contentEditable
         draggable={isDragging}
+        contentEditable
         onDragStart={() => { InitiateDragging(index); }}
         onDragEnter={() => { TrackDraggedElement(index); }}
         onDragEnd={() => { StopDragging(); }}
         onBlur={(e) => { UpdateBlockValue(e); }}
-        // onClick={() => { CloseOptions(); }}
         onInput={HandleInput}
         onKeyDown={(e) => { AddNewBlock('Enter', e); }}
+        style={{ color, background: bgcolor }}
       >
 
         {
@@ -268,9 +281,16 @@ function Blocks({
             )
             : style === 'bullet_list'
               ? (
-                <ul className={styles.bullet}>
-                  <li className={styles.element_value}>{value}</li>
-                </ul>
+            // here i didnt added the value directly in li tag for two reasons
+            // 1. color was interferin with the bulled too as the color is coming from parent div
+            // so it gets applied to bullet too and not just the value
+            // 2. wasnt able to make only the ul tag content editable false alone it was
+            //  causing the li value to be non editable because of that
+
+                <div className={styles.bullet}>
+                  <ul contentEditable={false} style={{ color: 'black', margin: '0px' }}><li /></ul>
+                  <div className={styles.element_value}>{value}</div>
+                </div>
               )
               : (
                 <div className={styles.element_value}>
@@ -318,7 +338,7 @@ function Blocks({
                   Color
                 </div>
                 {BlockColors.map((item) => (
-                  <div className={styles.basic_block}>
+                  <div className={styles.basic_block} onClick={() => { ChangeBlockColor(item.color, 'color'); }}>
                     <div className={styles.block_icon} style={{ color: item.color }}>
                       {' '}
                       A
@@ -332,7 +352,7 @@ function Blocks({
                   Background
                 </div>
                 {BlockBackground.map((item) => (
-                  <div className={styles.basic_block}>
+                  <div className={styles.basic_block} onClick={() => { ChangeBlockColor(item.bgcolor, 'bgcolor'); }}>
                     <div className={styles.block_icon} style={{ background: item.bgcolor }}>
                       {' '}
                       A

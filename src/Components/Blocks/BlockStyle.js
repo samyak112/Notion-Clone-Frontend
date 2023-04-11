@@ -38,6 +38,12 @@ const BlockStyles = [{
     },
     name: 'bullet_list',
   },
+  number_list: {
+    style: {
+      fontSize: '1em',
+    },
+    name: 'number_list',
+  },
 }];
 
 export default BlockStyles;

@@ -75,12 +75,12 @@
     opacity: 1;   
 }
 
-.content_blocks[placeholder]:empty:before {
+.element_value[placeholder]:empty:before {
     content: attr(placeholder);
     color: #555; 
 }
 
-.content_blocks[placeholder]:empty:focus:before {
+.element_value[placeholder]:empty:focus:before {
     /* added this non breaking character here because otherwise the height was getting 0 as the div was getting empty */
     content: '\00a0';
 }
@@ -180,8 +180,10 @@
 }
 
 .bullet{
-    margin: 0px;
-    padding-inline: 1.5rem;
     display: flex;
     width: inherit;
 }
+
+/* ul{
+    color: black;
+} */

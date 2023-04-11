@@ -91,6 +91,7 @@
     width: 100%;
     position: absolute;
     object-fit:cover;
+    /* object-position: center 78.48%; */
 }
 
 #main_content_wrap{
