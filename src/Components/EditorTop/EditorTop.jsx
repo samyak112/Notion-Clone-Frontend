@@ -1,11 +1,13 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState, Suspense, lazy } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  ImageRounded, SentimentSatisfiedAlt, Add, DragIndicator,
+  ImageRounded, SentimentSatisfiedAlt,
 } from '@mui/icons-material';
 import axios from 'axios';
 import styles from './EditorTop.module.css';
-import { InitialFileName, ChangeCurrentFileId, CurrentFileName } from '../../Redux/ExplorerSlice';
+import { ChangeCurrentFileId, CurrentFileName } from '../../Redux/ExplorerSlice';
 
 function EditorTop({ FileDetails }) {
   const dispatch = useDispatch();
@@ -18,13 +20,12 @@ function EditorTop({ FileDetails }) {
     state: false, value: 50, IsMoving: false,
   });
   const [ShowEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [CurrentCoverPhoto, setCurrentCoverPhoto] = useState(null);
 
   // redux
   const InitialFileDetails = useSelector((state) => state.ExplorerDetails.InitialValues);
 
   const LazyEmojiPicker = lazy(() => import('emoji-picker-react'));
-
-  const [CurrentCoverPhoto, setCurrentCoverPhoto] = useState(null);
 
   function CoverPhotoStyle() {
     if (CoverPhoto === null && CurrentCoverPhoto === null) {
@@ -53,7 +54,7 @@ function EditorTop({ FileDetails }) {
     }
   }
 
-  function save_details() {
+  function SaveDetails() {
     console.log('save details');
   }
 
@@ -74,7 +75,7 @@ function EditorTop({ FileDetails }) {
         style={CoverPhoto == null && CurrentCoverPhoto === null ? { height: '8rem' } : { height: '14rem' }}
         onMouseDown={(e) => { ImageRepositioningSystem(e); }}
         onMouseMove={(e) => { TrackCoverPhotoPosition(e); }}
-        onMouseUp={() => { console.log('worked'); setImageRepositioning({ ...ImageRepositioning, IsMoving: false }); }}
+        onMouseUp={() => { setImageRepositioning({ ...ImageRepositioning, IsMoving: false }); }}
 
       >
         <div id={styles.cover_image_wrap} style={CoverPhotoStyle()}>
@@ -121,7 +122,7 @@ function EditorTop({ FileDetails }) {
         </div>
       </div>
       <div id={styles.centered_area_wrap}>
-        <button type="button" onClick={() => { save_details(); }} id={styles.save_button}>save</button>
+        <button type="button" onClick={() => { SaveDetails(); }} id={styles.save_button}>save</button>
         <div id={styles.centered_area_inner_wrap}>
           <div id={styles.emoji} onClick={() => { setShowEmojiPicker(true); }}>{icon}</div>
           {/* this div used to cover the whole page when user is checking the options

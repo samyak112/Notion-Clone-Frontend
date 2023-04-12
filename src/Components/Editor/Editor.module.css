@@ -6,64 +6,6 @@
     overflow-y: scroll;
 }
 
-#top{
-    position: relative;
-}
-
-#centered_area_wrap{
-    height: 4rem;
-    display: flex;
-    justify-content: center;
-    position: relative;
-}
-
-#save_button{
-    justify-content: flex-end;
-}
-
-#centered_area_inner_wrap{
-    width: 55%;
-    position: absolute;
-    height: 100%;
-    bottom: 50%;
-}
-
-#emoji{
-    display: flex;
-    justify-content: center;
-    height: 100%;
-    width: 5rem;
-    font-size: 4rem;
-    line-height: 100%;
-    margin-bottom: 1rem;
-    cursor: pointer;
-}
-
-#emoji_picker{
-    position: absolute;
-    z-index: 1;
-}
-
-#cover_photo{
-    height: 14rem;
-    position: relative;
-}
-
-#cover_image_wrap{
-    height: 100%;
-}
-
-#cover_photo_options{
-    display: none;
-    position: absolute;
-    right: 5rem;
-    bottom: 1rem;
-    font-size: .8rem;
-    background-color: #ebe6e6;
-    cursor: pointer;
-    animation: faded .3s 1;
-}
-
 @keyframes faded {
     0% {
         opacity: 0;
@@ -72,27 +14,6 @@
         opacity: 1;
       }
   }
-
-.cover_photo_options_comps{
-    padding-block: .2rem;
-    padding-inline: .3rem;
-}
-
-.cover_photo_options_comps:hover{
-    background-color: #dedada;
-}
-
-#cover_image_wrap:hover > #cover_photo_options{
-    display: flex;
-}
-
-#image{
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    object-fit:cover;
-    /* object-position: center 78.48%; */
-}
 
 #main_content_wrap{
     display: flex;
@@ -103,31 +24,6 @@
 #main_content{
     height: inherit;
     width: 55%;
-}
-
-#options{
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    height: 2rem;
-    color:rgba(55, 53, 47, 0.5);
-}
-
-.options_comps{
-    display: none;
-    align-items: center;
-    padding-inline: .5rem;
-    padding-block: .2rem;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.options_comps:hover{
-    background-color: rgba(55, 53, 47, 0.08);
-}
-
-#top:hover .options_comps{
-    display: flex;
 }
 
 #title{
@@ -151,17 +47,6 @@
 .input_field::placeholder{
     color: #e7e3e3;
 }
-
-.overlay_container{
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    bottom: 0px;
-    right: 0px;
-    z-index: 1;
-    opacity:0;
-    cursor: default;
-  }
 
 #add_first_block{
     display: flex;

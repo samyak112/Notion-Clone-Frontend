@@ -17,7 +17,7 @@ import BlockStyles from './BlockStyle';
 import BlockOptionsData from './BlockOptionsData';
 
 function Blocks({
-  BlockData, UpdateBlocks, DeleteBlock, UpdateBlockStyle,
+  BlockData, UpdateBlocks, DeleteBlock, UpdateBlockStyle, NumberedListCount,
 }) {
   const dispatch = useDispatch();
   const { BasicBlocks, BlockColors, BlockBackground } = BlockOptionsData;
@@ -152,9 +152,12 @@ function Blocks({
   }
 
   function AddNewBlock(source, e) {
+    const CommonPayload = {
+      IsNewBlock: true, IsDuplicate: false, index,
+    };
     if (source === 'Duplicate') {
       UpdateBlocks({
-        IsNewBlock: true, IsDuplicate: true, value: ElementValue, index, style,
+        IsNewBlock: true, IsDuplicate: true, value: ElementValue, index,
       });
     } else if (ElementValue.length !== 0 && ElementValue !== '\u00A0') {
       if (source === 'Enter') {
@@ -162,21 +165,19 @@ function Blocks({
           e.preventDefault();
           if (style === 'to_do_list') {
             UpdateBlocks({
-              IsNewBlock: true, IsDuplicate: false, index, style: 'to_do_list', isChecked: true,
+              ...CommonPayload, style, isChecked: true,
             });
-          } else if (style === 'bullet_list') {
-            UpdateBlocks({
-              IsNewBlock: true, IsDuplicate: false, index, style: 'bullet_list',
-            });
+          } else if (style === 'bullet_list' || style === 'number_list') {
+            UpdateBlocks({ ...CommonPayload, style });
           } else {
             UpdateBlocks({
-              IsNewBlock: true, IsDuplicate: false, index, style,
+              ...CommonPayload, style: 'text',
             });
           }
         }
       } else {
         UpdateBlocks({
-          IsNewBlock: true, IsDuplicate: false, index, style: 'text',
+          IsNewBlock: true, IsDuplicate: false, style: 'text',
         });
       }
     } else if (source === 'Add') {
@@ -190,11 +191,17 @@ function Blocks({
     let payload = null;
     if (BlockValue === 'to_do_list') {
       payload = {
-        IsNewBlock: false, isChecked: false, style: BlockValue, index, value: ElementValue, _id,
+        BlockData: {
+          IsNewBlock: false, isChecked: false, style: BlockValue, value: ElementValue, _id,
+        },
+        index,
       };
     } else {
       payload = {
-        IsNewBlock: false, style: BlockValue, index, value: ElementValue, _id,
+        BlockData: {
+          IsNewBlock: false, style: BlockValue, value: ElementValue, _id,
+        },
+        index,
       };
     }
     UpdateBlockStyle(payload);
@@ -282,7 +289,7 @@ function Blocks({
             : style === 'bullet_list'
               ? (
             // here i didnt added the value directly in li tag for two reasons
-            // 1. color was interferin with the bulled too as the color is coming from parent div
+            // 1. color was interfering with the bulled too as the color is coming from parent div
             // so it gets applied to bullet too and not just the value
             // 2. wasnt able to make only the ul tag content editable false alone it was
             //  causing the li value to be non editable because of that
@@ -292,11 +299,21 @@ function Blocks({
                   <div className={styles.element_value}>{value}</div>
                 </div>
               )
-              : (
-                <div className={styles.element_value}>
-                  {value}
-                </div>
-              )
+              : style === 'number_list'
+                ? (
+                  <>
+                    <div contentEditable={false}>
+                      {NumberedListCount}
+                      .
+                    </div>
+                    <div className={styles.element_value}>{value}</div>
+                  </>
+                )
+                : (
+                  <div className={styles.element_value}>
+                    {value}
+                  </div>
+                )
         }
       </div>
 

@@ -1,24 +1,14 @@
-/* eslint-disable no-lonely-if */
 /* eslint-disable no-console */
-/* eslint-disable no-else-return */
 /* eslint-disable no-underscore-dangle */
-import React, {
-  lazy, Suspense, useEffect, useRef, useState,
-} from 'react';
-import {
-  ImageRounded, SentimentSatisfiedAlt, Add, DragIndicator,
-} from '@mui/icons-material';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import DescriptionIcon from '@mui/icons-material/Description';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-// import { useParams } from 'react-router-dom';
 import styles from './Editor.module.css';
 import { InitialFileName, ChangeCurrentFileId, CurrentFileName } from '../../Redux/ExplorerSlice';
 import EditorTop from '../EditorTop/EditorTop';
-// import BlockStyles from '../Blocks/BlockStyle';
-
 import Blocks from '../Blocks/Blocks';
 
 function Editor({ IndividualFileData, source }) {
@@ -29,11 +19,7 @@ function Editor({ IndividualFileData, source }) {
 
   // states
   const [blocks, setblocks] = useState([]);
-  const [CurrentCoverPhoto, setCurrentCoverPhoto] = useState(null);
-  const [ShowEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [ImageRepositioning, setImageRepositioning] = useState({
-    state: false, value: 50, IsMoving: false,
-  });
+  console.log(blocks);
   // const [CurrentEditedBlock, setCurrentEditedBlock] = useState({
   //   _id: null, value: null, style: null,
   // });
@@ -45,34 +31,21 @@ function Editor({ IndividualFileData, source }) {
   // this ref is maintainted to check if the block which is being edited is the first block
   // or not , this maintained for the logic which is being used to save the blocks
   // const IsInitialBlock = useRef(true);
+  const NumberedListCount = useRef(0);
 
   // destructured props
   const { FileName, Icon } = CurrentFileDetails;
   const { CoverPhoto, values, ref_id } = IndividualFileData;
   const dispatch = useDispatch();
 
-  const LazyEmojiPicker = lazy(() => import('emoji-picker-react'));
-
-  function GetRandomCoverPhoto() {
-    axios.get('https://api.unsplash.com/photos/random/?client_id=dEEKpPdrq662jfcMhkUThg_ICPT4EVxnNnUFmIIur1s')
-      .then((response) => {
-        setCurrentCoverPhoto(response.data.urls.regular);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-
   function FileDetailsToRender() {
     if (source === 'new') {
       return { fileName: FileName, icon: Icon };
-    } else {
-      if (CurrentFileId === ref_id) {
-        return { fileName: FileName, icon: Icon };
-      } else {
-        return { fileName: InitialFileDetails.FileName, icon: InitialFileDetails.Icon };
-      }
     }
+    if (CurrentFileId === ref_id) {
+      return { fileName: FileName, icon: Icon };
+    }
+    return { fileName: InitialFileDetails.FileName, icon: InitialFileDetails.Icon };
   }
 
   const RenderedFileDetails = FileDetailsToRender();
@@ -100,8 +73,11 @@ function Editor({ IndividualFileData, source }) {
       if (payload.IsDuplicate) {
         newArray.splice(index + 1, 0, { _id: uuidv4(), value, style });
       } else {
+        console.log(payload);
         // this value is a non-breaking space character
-        newArray.splice(index + 1, 0, { _id: uuidv4(), value: '\u00A0', style });
+        newArray.splice(index + 1, 0, {
+          _id: uuidv4(), value: '\u00A0', style, color: '#37352F', bgcolor: '#FFFFFF',
+        });
       }
       setblocks(newArray);
     }
@@ -109,7 +85,7 @@ function Editor({ IndividualFileData, source }) {
 
   function UpdateBlockStyle(payload) {
     const newArray = [...blocks];
-    newArray[payload.index] = payload;
+    newArray[payload.index] = payload.BlockData;
     setblocks(newArray);
   }
 
@@ -120,151 +96,13 @@ function Editor({ IndividualFileData, source }) {
     setblocks(newArray);
   }
 
-  function save_details() {
-    console.log('save details');
-  }
-
-  function CoverPhotoStyle() {
-    if (CoverPhoto === null && CurrentCoverPhoto === null) {
-      return { display: 'none' };
-    } else if (ImageRepositioning.state === true) {
-      return { display: 'block', cursor: 'all-scroll' };
-    } else {
-      return { display: 'block' };
-    }
-  }
-
-  function ImageRepositioningSystem(e) {
-    e.preventDefault();
-    if (ImageRepositioning.state === true) {
-      setImageRepositioning({ ...ImageRepositioning, IsMoving: true });
-    }
-  }
-
-  function TrackCoverPhotoPosition(e) {
-    const { IsMoving, value } = ImageRepositioning;
-    if (IsMoving === true) {
-      if (e.movementY < 0 && value > 0) {
-        setImageRepositioning({ ...ImageRepositioning, value: value - 0.4 });
-      } else if (e.movementY > 0 && value < 100) {
-        setImageRepositioning({ ...ImageRepositioning, value: value + 0.4 });
-      }
-    }
-  }
-
-  console.log(ImageRepositioning.value);
-
   return (
-    <div
-      id={styles.main}
-      // onMouseMove={(e) => { TrackCoverPhotoPosition(e); }}
-      // onMouseUp={() => { console.log('worked'); setImageRepositioning({ ...ImageRepositioning, IsMoving: false }); }}
-    >
+    <div id={styles.main}>
       <div id={styles.top}>
         <EditorTop FileDetails={{
           CoverPhoto, Icon, ref_id, icon,
         }}
         />
-        {/* <div
-          id={styles.cover_photo}
-          style={CoverPhoto == null && CurrentCoverPhoto === null ? { height: '8rem' } : { height: '14rem' }}
-          onMouseDown={(e) => { ImageRepositioningSystem(e); }}
-        >
-          <div id={styles.cover_image_wrap} style={CoverPhotoStyle()}>
-            {
-              CoverPhoto != null
-                ? <img id={styles.image} src={CoverPhoto} alt="" />
-                : CurrentCoverPhoto != null
-                  ? <img id={styles.image} style={{ objectPosition: `center ${ImageRepositioning.value}%` }} src={CurrentCoverPhoto} alt="" />
-                  : ''
-            }
-            <div id={styles.cover_photo_options}>
-              {
-                !ImageRepositioning.state
-                  ? (
-                    <>
-                      <div className={styles.cover_photo_options_comps}>Change cover</div>
-                      <div
-                        className={styles.cover_photo_options_comps}
-                        onClick={() => {
-                          setImageRepositioning({ ...ImageRepositioning, state: true });
-                        }}
-                      >
-                        Reposition
-                      </div>
-                    </>
-                  )
-                  : (
-                    <>
-                      <div className={styles.cover_photo_options_comps}>Save Position</div>
-                      <div
-                        className={styles.cover_photo_options_comps}
-                        onClick={() => {
-                          setImageRepositioning({ ...ImageRepositioning, state: false });
-                        }}
-                      >
-                        Cancel
-
-                      </div>
-                    </>
-                  )
-              }
-
-            </div>
-          </div>
-        </div> */}
-        {/* <div id={styles.centered_area_wrap}>
-          <button type="button" onClick={() => { save_details(); }} id={styles.save_button}>save</button>
-          <div id={styles.centered_area_inner_wrap}>
-            <div id={styles.emoji} onClick={() => { setShowEmojiPicker(true); }}>{icon}</div> */}
-        {/* this div used to cover the whole page when user is checking the options
-        it is not visible tho but stops users from clicking anywhere else */}
-        {/* <div
-              className={styles.overlay_container}
-              style={ShowEmojiPicker ? { width: '100vw', height: '100vh' } : { width: '0vw', height: '0vh' }}
-              onClick={() => { setShowEmojiPicker(false); }}
-            /> */}
-
-        {/* <Suspense fallback={<div />}>
-              {ShowEmojiPicker && (
-              <div id={styles.emoji_picker}>
-                <LazyEmojiPicker
-                  onEmojiClick={(e) => {
-                    dispatch(ChangeCurrentFileId(ref_id));
-                    dispatch(CurrentFileName({
-                      FileName: InitialFileDetails.FileName, Icon: e.emoji,
-                    }));
-                    setShowEmojiPicker(false);
-                  }}
-                />
-              </div>
-              )}
-            </Suspense> */}
-
-        {/* <div id={styles.options}>
-              {
-                Icon == null
-                  ? (
-                    <div className={styles.options_comps}>
-                      <SentimentSatisfiedAlt />
-                      Add icon
-                    </div>
-                  )
-                  : ''
-              }
-              {
-                CoverPhoto == null && CurrentCoverPhoto == null
-                  ? (
-                    <div className={styles.options_comps} onClick={GetRandomCoverPhoto}>
-                      <ImageRounded />
-                      Add cover
-                    </div>
-                  )
-                  : ''
-              }
-            </div> */}
-        {/* </div>
-        </div> */}
       </div>
 
       <div id={styles.main_content_wrap}>
@@ -301,20 +139,58 @@ function Editor({ IndividualFileData, source }) {
           <div className={styles.editor_comps} id={styles.content}>
             {
             blocks.length !== 0
-              ? blocks.map((elem, index) => (
-                <Blocks
-                  key={elem._id}
-                  BlockData={{ elem, index }}
-                  UpdateBlocks={UpdateBlocks}
-                  DeleteBlock={DeleteBlock}
-                  UpdateBlockStyle={UpdateBlockStyle}
-                />
-              ))
+              ? blocks.map((elem, index) => {
+                // let NumberedListCount = 0;
+                if (((index !== 0) && (blocks[index - 1].style !== 'number_list' || elem.style !== 'number_list')) || index === 0) {
+                  NumberedListCount.current = 1;
+                } else if (elem.style === 'number_list' && index !== 0) {
+                  NumberedListCount.current += 1;
+                }
+                return (
+                  <Blocks
+                    key={elem._id}
+                    BlockData={{ elem, index }}
+                    UpdateBlocks={UpdateBlocks}
+                    DeleteBlock={DeleteBlock}
+                    UpdateBlockStyle={UpdateBlockStyle}
+                    NumberedListCount={NumberedListCount.current}
+                  />
+                );
+                return null;
+              })
               : (
                 <div
                   id={styles.add_first_block}
                   onClick={() => {
                     setblocks([{
+                      _id: uuidv4(),
+                      value: '\u00A0',
+                      style: 'text',
+                      color: '#37352F',
+                      bgcolor: '#FFFFFF',
+                    },
+                    {
+                      _id: uuidv4(),
+                      value: '\u00A0',
+                      style: 'text',
+                      color: '#37352F',
+                      bgcolor: '#FFFFFF',
+                    },
+                    {
+                      _id: uuidv4(),
+                      value: '\u00A0',
+                      style: 'text',
+                      color: '#37352F',
+                      bgcolor: '#FFFFFF',
+                    },
+                    {
+                      _id: uuidv4(),
+                      value: '\u00A0',
+                      style: 'text',
+                      color: '#37352F',
+                      bgcolor: '#FFFFFF',
+                    },
+                    {
                       _id: uuidv4(),
                       value: '\u00A0',
                       style: 'text',

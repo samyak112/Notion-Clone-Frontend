@@ -4,6 +4,7 @@ import h3 from '../../assets/h3.png';
 import text from '../../assets/text.png';
 import BulletList from '../../assets/bullet_list.png';
 import ToDoList from '../../assets/to_do_list.png';
+import NumberList from '../../assets/numbered_list.png';
 
 const BasicBlocks = [
   {
@@ -23,6 +24,9 @@ const BasicBlocks = [
   },
   {
     icon: BulletList, Heading: 'Bulleted List', Description: 'Create a Simple Bulleted List', value: 'bullet_list',
+  },
+  {
+    icon: NumberList, Heading: 'Numbered List', Description: 'Create a List with Numbering', value: 'number_list',
   },
 ];
 
