@@ -28,8 +28,6 @@ function Blocks({
   } = elem;
 
   // states
-  const DraggingDetails = useSelector((state) => state.TrackingDetails.DraggingDetails);
-  const { current, direction } = DraggingDetails;
   const [isDragging, setisDragging] = useState(null);
   const [ElementValue, setElementValue] = useState(value);
   const [OpenBlockStyleOptions, setOpenBlockStyleOptions] = useState({
@@ -40,6 +38,10 @@ function Blocks({
   // Ref
   const IsEdited = useRef(null);
   const LastCharChange = useRef(null);
+
+  // Redux
+  const DraggingDetails = useSelector((state) => state.TrackingDetails.DraggingDetails);
+  const { current, direction } = DraggingDetails;
 
   function InitiateDragging(ElementLocation) {
     dispatch(ChangeTrackingDetails({ key: 'Started', value: true }));
@@ -110,12 +112,13 @@ function Blocks({
         });
       }
     }
+
     setElementValue(Currentvalue);
+
     LastCharChange.current = Currentvalue[Currentvalue.length - 1];
   }
 
   function UpdateBlockValue(e) {
-    console.log(e.target.innerText);
     if (e.target.nodeName !== 'INPUT') {
       if (IsEdited.current === true) {
         const payload = {
@@ -152,6 +155,7 @@ function Blocks({
   }
 
   function AddNewBlock(source, e) {
+    const CurrentValue = e.target.innerText;
     const CommonPayload = {
       IsNewBlock: true, IsDuplicate: false, index,
     };
@@ -165,32 +169,55 @@ function Blocks({
           IsNewBlock: true, IsDuplicate: true, value: ElementValue, index, style,
         });
       }
-    } else if (ElementValue.length !== 0 && ElementValue !== '\u00A0') {
-      if (source === 'Enter') {
-        if (e.code === 'Enter' && e.shiftKey === false) {
-          e.preventDefault();
-          if (style === 'to_do_list') {
-            UpdateBlocks({
-              ...CommonPayload, style, isChecked: false,
-            });
-          } else if (style === 'bullet_list' || style === 'number_list') {
-            UpdateBlocks({ ...CommonPayload, style });
-          } else {
-            UpdateBlocks({
-              ...CommonPayload, style: 'text',
-            });
-          }
-        }
-      } else {
-        UpdateBlocks({
-          IsNewBlock: true, IsDuplicate: false, style: 'text',
-        });
-      }
     } else if (source === 'Add') {
       if (!OpenBlockStyleOptions.state) {
         setOpenBlockStyleOptions({ ...OpenBlockStyleOptions, state: true });
       }
+    } else if (source === 'Enter') {
+      if ((e.code === 'Enter' && CurrentValue.length === 0) || (e.code === 'Enter' && e.shiftKey === false && ElementValue.length !== 0 && ElementValue !== '')) {
+        e.preventDefault();
+        console.log('herereee');
+        if (style === 'to_do_list') {
+          UpdateBlocks({
+            ...CommonPayload, style, isChecked: false,
+          });
+        } else if (style === 'bullet_list' || style === 'number_list') {
+          console.log('here');
+          UpdateBlocks({ ...CommonPayload, style });
+        } else {
+          UpdateBlocks({
+            ...CommonPayload, style: 'text',
+          });
+        }
+      }
     }
+    // } else if (CurrentValue.length !== 0 && CurrentValue !== '') {
+    //   if (source === 'Enter') {
+    //     if (e.code === 'Enter' && e.shiftKey === false) {
+    //       e.preventDefault();
+    //       if (style === 'to_do_list') {
+    //         UpdateBlocks({
+    //           ...CommonPayload, style, isChecked: false,
+    //         });
+    //       } else if (style === 'bullet_list' || style === 'number_list') {
+    //         UpdateBlocks({ ...CommonPayload, style });
+    //       } else {
+    //         UpdateBlocks({
+    //           ...CommonPayload, style: 'text',
+    //         });
+    //       }
+    //     }
+    //   } else {
+    //     UpdateBlocks({
+    //       IsNewBlock: true, IsDuplicate: false, style: 'text',
+    //     });
+    //   }
+    // } else if (e.code === 'Enter' && e.target.innerText.length === 0) {
+    //   e.preventDefault();
+    //   UpdateBlocks({
+    //     ...CommonPayload, style: 'text',
+    //   });
+    // }
   }
 
   function ChangeBlockStyle(BlockValue) {
@@ -203,6 +230,7 @@ function Blocks({
         index,
       };
     } else {
+      console.log('came in this block style');
       payload = {
         BlockData: {
           IsNewBlock: false, style: BlockValue, value: ElementValue, _id,
@@ -230,6 +258,17 @@ function Blocks({
     UpdateBlocks(payload, 'checkbox');
   }
 
+  function BeforePsuedoValuetoRender() {
+    switch (style) {
+      case 'bullet_list':
+        return { '--content--var': '"•"' };
+      case 'number_list':
+        return { '--content--var': `"${NumberedListCount}."` };
+      default:
+        break;
+    }
+  }
+
   // function NewElementPositionHighlight() {
   //   const borderStyle = null;
   //   if (current === index) {
@@ -255,7 +294,6 @@ function Blocks({
       />
       <div
         className={styles.content_blocks}
-        placeholder={BlockStyles[0][style].name === 'Text' ? 'Press / for commands' : BlockStyles[0][style].name}
         draggable={isDragging}
         contentEditable
         onDragStart={() => { InitiateDragging(index); }}
@@ -263,7 +301,9 @@ function Blocks({
         onDragEnd={() => { StopDragging(); }}
         onBlur={(e) => { UpdateBlockValue(e); }}
         onInput={HandleInput}
-        onKeyDown={(e) => { AddNewBlock('Enter', e); }}
+        onKeyDown={(e) => {
+          AddNewBlock('Enter', e);
+        }}
         style={{ color, background }}
       >
 
@@ -293,17 +333,22 @@ function Blocks({
                 </div>
               </>
             )
-            : style === 'bullet_list'
-              ? (
-                <div style={{ '--content--var': '"•"' }} className={styles.element_value}>{value}</div>
-              )
-              : style === 'number_list'
-                ? (
-                  <div className={styles.element_value} style={{ '--content--var': `"${NumberedListCount}."` }}>{value}</div>
-                )
-                : (
-                  <div className={styles.element_value}>{value}</div>
-                )
+            : (
+              <>
+                <div
+                  className={styles.before_value}
+                  contentEditable={false}
+                  style={BeforePsuedoValuetoRender()}
+                />
+                <div
+                  placeholder={BlockStyles[0][style].name === 'Text' ? 'Press / for commands' : BlockStyles[0][style].name}
+                  className={styles.element_value}
+                >
+                  {value}
+
+                </div>
+              </>
+            )
         }
       </div>
 

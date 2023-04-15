@@ -74,7 +74,7 @@ function Editor({ IndividualFileData, source }) {
         console.log(payload);
         // this value is a non-breaking space character
         newArray.splice(index + 1, 0, {
-          _id: uuidv4(), value: '\u00A0', style, color: '#37352F', background: '#FFFFFF',
+          _id: uuidv4(), value: '', style, color: '#37352F', background: '#FFFFFF',
         });
       }
       setblocks(newArray);
@@ -162,7 +162,7 @@ function Editor({ IndividualFileData, source }) {
                   onClick={() => {
                     setblocks([{
                       _id: uuidv4(),
-                      value: '\u00A0',
+                      value: '',
                       style: 'text',
                       color: '#37352F',
                       background: '#FFFFFF',
@@ -186,7 +186,7 @@ function Editor({ IndividualFileData, source }) {
 Editor.defaultProps = {
   IndividualFileData: {
     CoverPhoto: null,
-    values: [{ value: '\u00A0', style: 'text' }],
+    values: [{ value: '', style: 'text' }],
   },
 };
 

@@ -44,17 +44,17 @@
     white-space: pre-line;
 }
 
-.element_value[placeholder]:empty:before {
+.element_value[placeholder]:empty::before {
     content: attr(placeholder);
     color: #555; 
 }
 
-.element_value[placeholder]:empty:focus:before {
+.element_value[placeholder]:empty:focus::before {
     /* added this non breaking character here because otherwise the height was getting 0 as the div was getting empty */
     content: '\00a0';
 }
 
-.element_value::before{
+.before_value::before{
     content: var(--content--var);
     color: black;
 }
