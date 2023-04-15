@@ -1,3 +1,7 @@
+:root {
+    --content--var: '';
+  }
+
 .main{
     display: flex;
     align-items: center;
@@ -40,6 +44,22 @@
     white-space: pre-line;
 }
 
+.element_value[placeholder]:empty:before {
+    content: attr(placeholder);
+    color: #555; 
+}
+
+.element_value[placeholder]:empty:focus:before {
+    /* added this non breaking character here because otherwise the height was getting 0 as the div was getting empty */
+    content: '\00a0';
+}
+
+.element_value::before{
+    content: var(--content--var);
+    color: black;
+}
+
+
 .content_blocks:focus{
     outline: none;
 }
@@ -74,15 +94,7 @@
     opacity: 1;   
 }
 
-.element_value[placeholder]:empty:before {
-    content: attr(placeholder);
-    color: #555; 
-}
 
-.element_value[placeholder]:empty:focus:before {
-    /* added this non breaking character here because otherwise the height was getting 0 as the div was getting empty */
-    content: '\00a0';
-}
 
 #block_options{
     position: absolute;
@@ -94,63 +106,6 @@
     background-color: white;
     overflow-y: scroll;
     box-shadow: 0 2px 4px rgb(0 0 0 / 10%), 0 8px 16px rgb(0 0 0 / 10%);
-}
-
-.option_heading{
-    font-size: .8rem;
-    color: #b1aeae;
-    margin-inline: 1rem;
-    margin-top: 1rem;
-}
-
-.basic_block{
-    display: grid;
-    grid-template-columns: 1fr 5fr;
-    /* height: 3rem; */
-    margin: .5rem;
-    padding-left: .4rem;
-    /* padding-block: .1rem; */
-    /* padding-bottom: 1rem; */
-    padding-block: .4rem;
-    position: relative;
-    cursor: pointer;
-    /* margin-bottom: 1rem; */
-    border-radius: 5px;
-}
-
-.basic_block:hover{
-    background-color: rgb(241, 239, 239);
-}
-
-.block_icon{
-    display: flex;
-    justify-content: center;
-    position: relative;
-    height: 100%;
-    width: 100%;
-    border-radius: 5px;
-    border: 2px solid rgb(227, 217, 217);
-    /* height: 2rem; */
-}
-
-#actual_image{
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    object-fit: contain;
-    /* border: 2px solid black; */
-}
-
-.block_text{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-left: .5rem;
-}
-
-.description{
-    font-size: .9rem;
-    color: rgb(166, 148, 148);
 }
 
 .drag_options{
@@ -172,6 +127,22 @@
     margin-block: .5rem;
     gap: .5rem;
     cursor: pointer;
+}
+
+.drag_options_left{
+    display: flex;
+    width: 100%;
+}
+
+.drag_options_right{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.open_drag_options{
+    position: absolute;
+    right: -1rem;
 }
 
 .drag_options_comps:hover{

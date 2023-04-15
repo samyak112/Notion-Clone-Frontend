@@ -1,0 +1,97 @@
+.option_heading{
+    font-size: .8rem;
+    color: #b1aeae;
+    margin-inline: 1rem;
+    margin-top: 1rem;
+}
+
+.basic_block{
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+    /* height: 3rem; */
+    margin: .5rem;
+    padding-left: .4rem;
+    /* padding-block: .1rem; */
+    /* padding-bottom: 1rem; */
+    padding-block: .4rem;
+    position: relative;
+    cursor: pointer;
+    /* margin-bottom: 1rem; */
+    border-radius: 5px;
+}
+
+.basic_block:hover{
+    background-color: rgb(241, 239, 239);
+}
+
+.block_icon{
+    display: flex;
+    justify-content: center;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    border-radius: 5px;
+    border: 2px solid rgb(227, 217, 217);
+    /* height: 2rem; */
+}
+
+#actual_image{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    /* border: 2px solid black; */
+}
+
+.block_text{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: .5rem;
+}
+
+.description{
+    font-size: .9rem;
+    color: rgb(166, 148, 148);
+}
+
+.drag_options_comps{
+    display: flex;
+    padding-inline: .5rem;
+    padding-block: .3rem;
+    border-radius: 3px;
+    margin-block: .5rem;
+    gap: .5rem;
+    cursor: pointer;
+}
+
+.drag_options_left{
+    display: flex;
+    width: 100%;
+}
+
+.drag_options_right{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    position: relative;
+}
+
+.open_drag_options{
+    position: absolute;
+    left: 3rem;
+    /* right: -15rem; */
+    border: 2px solid black;
+    width: 20rem;
+    height: 17rem;
+    z-index: 1;
+    /* added the background color otherwise the back text was coming forward because of transparency */
+    background-color: white;
+    overflow-y: scroll;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 10%), 0 8px 16px rgb(0 0 0 / 10%);
+    
+}
+
+.drag_options_comps:hover{
+    background-color: rgb(242, 241, 236);
+}

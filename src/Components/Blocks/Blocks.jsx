@@ -6,15 +6,14 @@ import PropTypes from 'prop-types';
 import { Add, DragIndicator } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import diff from 'fast-diff';
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
-import ImportExportOutlinedIcon from '@mui/icons-material/ImportExportOutlined';
-import FormatPaintOutlinedIcon from '@mui/icons-material/FormatPaintOutlined';
 import Checkbox from '@mui/material/Checkbox';
 import styles from './Blocks.module.css';
 import { ChangeTrackingDetails } from '../../Redux/ElementTrack';
 import BlockStyles from './BlockStyle';
 import BlockOptionsData from './BlockOptionsData';
+import BasicOptions from '../BlockOptions/BasicOptions';
+import ColorOptions from '../BlockOptions/ColorOptions';
+import DragOptions from '../BlockOptions/DragOptions';
 
 function Blocks({
   BlockData, UpdateBlocks, DeleteBlock, UpdateBlockStyle, NumberedListCount,
@@ -25,7 +24,7 @@ function Blocks({
   // Props data
   const { index, elem } = BlockData;
   const {
-    value, style, _id, color, bgcolor,
+    value, style, _id, color, background,
   } = elem;
 
   // states
@@ -116,6 +115,7 @@ function Blocks({
   }
 
   function UpdateBlockValue(e) {
+    console.log(e.target.innerText);
     if (e.target.nodeName !== 'INPUT') {
       if (IsEdited.current === true) {
         const payload = {
@@ -156,16 +156,22 @@ function Blocks({
       IsNewBlock: true, IsDuplicate: false, index,
     };
     if (source === 'Duplicate') {
-      UpdateBlocks({
-        IsNewBlock: true, IsDuplicate: true, value: ElementValue, index,
-      });
+      if (style === 'to_do_list') {
+        UpdateBlocks({
+          IsNewBlock: true, IsDuplicate: true, value: ElementValue, index, isChecked: false, style,
+        });
+      } else {
+        UpdateBlocks({
+          IsNewBlock: true, IsDuplicate: true, value: ElementValue, index, style,
+        });
+      }
     } else if (ElementValue.length !== 0 && ElementValue !== '\u00A0') {
       if (source === 'Enter') {
         if (e.code === 'Enter' && e.shiftKey === false) {
           e.preventDefault();
           if (style === 'to_do_list') {
             UpdateBlocks({
-              ...CommonPayload, style, isChecked: true,
+              ...CommonPayload, style, isChecked: false,
             });
           } else if (style === 'bullet_list' || style === 'number_list') {
             UpdateBlocks({ ...CommonPayload, style });
@@ -205,6 +211,7 @@ function Blocks({
       };
     }
     UpdateBlockStyle(payload);
+    setOpenBlockStyleOptions({ ...OpenBlockStyleOptions, state: false });
     // const payload = { _id, IsNewBlock: true };
   }
 
@@ -257,7 +264,7 @@ function Blocks({
         onBlur={(e) => { UpdateBlockValue(e); }}
         onInput={HandleInput}
         onKeyDown={(e) => { AddNewBlock('Enter', e); }}
-        style={{ color, background: bgcolor }}
+        style={{ color, background }}
       >
 
         {
@@ -288,31 +295,14 @@ function Blocks({
             )
             : style === 'bullet_list'
               ? (
-            // here i didnt added the value directly in li tag for two reasons
-            // 1. color was interfering with the bulled too as the color is coming from parent div
-            // so it gets applied to bullet too and not just the value
-            // 2. wasnt able to make only the ul tag content editable false alone it was
-            //  causing the li value to be non editable because of that
-
-                <div className={styles.bullet}>
-                  <ul contentEditable={false} style={{ color: 'black', margin: '0px' }}><li /></ul>
-                  <div className={styles.element_value}>{value}</div>
-                </div>
+                <div style={{ '--content--var': '"•"' }} className={styles.element_value}>{value}</div>
               )
               : style === 'number_list'
                 ? (
-                  <>
-                    <div contentEditable={false}>
-                      {NumberedListCount}
-                      .
-                    </div>
-                    <div className={styles.element_value}>{value}</div>
-                  </>
+                  <div className={styles.element_value} style={{ '--content--var': `"${NumberedListCount}."` }}>{value}</div>
                 )
                 : (
-                  <div className={styles.element_value}>
-                    {value}
-                  </div>
+                  <div className={styles.element_value}>{value}</div>
                 )
         }
       </div>
@@ -322,63 +312,18 @@ function Blocks({
         id={styles.block_options}
         style={OpenBlockStyleOptions.state ? { display: 'block', fontSize: '1rem' } : { display: 'none' }}
       >
-        <div className={styles.option_heading}>
-          Basic Block
-        </div>
-        {
-          BasicBlocks.map((item) => (
-            <div
-              className={styles.basic_block}
-              onClick={() => {
-                ChangeBlockStyle(item.value, style);
-                setOpenBlockStyleOptions({ ...OpenBlockStyleOptions, state: false });
-              }}
-            >
-              <div className={styles.block_icon}>
-                {' '}
-                <img id={styles.actual_image} src={item.icon} alt="" />
-              </div>
-              <div className={styles.block_text}>
-                <div className={styles.text}>{item.Heading}</div>
-                <div className={styles.description}>{item.Description}</div>
-              </div>
-            </div>
-          ))
-        }
+        <BasicOptions
+          style={style}
+          ChangeBlockStyle={ChangeBlockStyle}
+        />
 
         {
           (OpenBlockStyleOptions.state === true && OpenBlockStyleOptions.IsSlashCommand === true)
           || (OpenBlockStyleOptions.state === true && OpenBlockStyleOptions.IsTurnInTo === true)
             ? (
               <>
-                <div className={styles.option_heading}>
-                  Color
-                </div>
-                {BlockColors.map((item) => (
-                  <div className={styles.basic_block} onClick={() => { ChangeBlockColor(item.color, 'color'); }}>
-                    <div className={styles.block_icon} style={{ color: item.color }}>
-                      {' '}
-                      A
-                    </div>
-                    <div className={styles.block_text}>
-                      <div className={styles.text}>{item.Heading}</div>
-                    </div>
-                  </div>
-                ))}
-                <div className={styles.option_heading}>
-                  Background
-                </div>
-                {BlockBackground.map((item) => (
-                  <div className={styles.basic_block} onClick={() => { ChangeBlockColor(item.bgcolor, 'bgcolor'); }}>
-                    <div className={styles.block_icon} style={{ background: item.bgcolor }}>
-                      {' '}
-                      A
-                    </div>
-                    <div className={styles.block_text}>
-                      <div className={styles.text}>{item.Heading}</div>
-                    </div>
-                  </div>
-                ))}
+                <ColorOptions Heading="Color" MappedData={BlockColors} ChangeBlockColor={ChangeBlockColor} />
+                <ColorOptions Heading="Background" MappedData={BlockBackground} ChangeBlockColor={ChangeBlockColor} />
               </>
             )
             : ''
@@ -390,22 +335,7 @@ function Blocks({
         className={styles.drag_options}
         style={OpenBlockChangeOptions ? { display: 'block' } : { display: 'none' }}
       >
-        <div className={styles.drag_options_comps} onClick={() => { DeleteBlock(index); }}>
-          <div className={styles.drag_option_icon}><DeleteOutlineOutlinedIcon /></div>
-          <div className={styles.drag_option_text}>Delete</div>
-        </div>
-        <div className={styles.drag_options_comps} onClick={(e) => { AddNewBlock('Duplicate', e); }}>
-          <div className={styles.drag_option_icon}><ContentCopyOutlinedIcon /></div>
-          <div className={styles.drag_option_text}>Duplicate</div>
-        </div>
-        <div className={styles.drag_options_comps}>
-          <div className={styles.drag_option_icon}><ImportExportOutlinedIcon /></div>
-          <div className={styles.drag_option_text}>Turn into</div>
-        </div>
-        <div className={styles.drag_options_comps}>
-          <div className={styles.drag_option_icon}><FormatPaintOutlinedIcon /></div>
-          <div className={styles.drag_option_text}>Color</div>
-        </div>
+        <DragOptions DeleteBlock={DeleteBlock} AddNewBlock={AddNewBlock} index={index} />
       </div>
 
       {/* BLock Options */}

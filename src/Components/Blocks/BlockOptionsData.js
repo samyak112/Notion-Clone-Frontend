@@ -44,16 +44,16 @@ const BlockColors = [
 ];
 
 const BlockBackground = [
-  { bgcolor: '#FFFFFF', Heading: 'Default Background' },
-  { bgcolor: '#F1F1EF', Heading: 'Gray Background' },
-  { bgcolor: '#F4EEEE', Heading: 'Brown Background' },
-  { bgcolor: '#FBECDD', Heading: 'Orange Background' },
-  { bgcolor: '#FBF3DB', Heading: 'Yellow Background' },
-  { bgcolor: '#EDF3EC', Heading: 'Green Background' },
-  { bgcolor: '#E7F3F8', Heading: 'Blue Background' },
-  { bgcolor: '#F4F0F7CC', Heading: 'Purple Background' },
-  { bgcolor: '#F9EEF3CC', Heading: 'Pink Background' },
-  { bgcolor: '#FDEBEC', Heading: 'Red Background' },
+  { background: '#FFFFFF', Heading: 'Default Background' },
+  { background: '#F1F1EF', Heading: 'Gray Background' },
+  { background: '#F4EEEE', Heading: 'Brown Background' },
+  { background: '#FBECDD', Heading: 'Orange Background' },
+  { background: '#FBF3DB', Heading: 'Yellow Background' },
+  { background: '#EDF3EC', Heading: 'Green Background' },
+  { background: '#E7F3F8', Heading: 'Blue Background' },
+  { background: '#F4F0F7CC', Heading: 'Purple Background' },
+  { background: '#F9EEF3CC', Heading: 'Pink Background' },
+  { background: '#FDEBEC', Heading: 'Red Background' },
 ];
 
 export default { BasicBlocks, BlockColors, BlockBackground };

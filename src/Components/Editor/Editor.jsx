@@ -60,10 +60,8 @@ function Editor({ IndividualFileData, source }) {
       const newArray = [...blocks];
       if (type === 'checkbox') {
         newArray[index].isChecked = payload.isChecked;
-      } else if (type === 'color') {
-        newArray[index].color = payload.ColorValue;
-      } else if (type === 'bgcolor') {
-        newArray[index].bgcolor = payload.ColorValue;
+      } else if (type === 'color' || type === 'background') {
+        newArray[index][type] = payload.ColorValue;
       } else {
         newArray[index].value = value;
       }
@@ -76,7 +74,7 @@ function Editor({ IndividualFileData, source }) {
         console.log(payload);
         // this value is a non-breaking space character
         newArray.splice(index + 1, 0, {
-          _id: uuidv4(), value: '\u00A0', style, color: '#37352F', bgcolor: '#FFFFFF',
+          _id: uuidv4(), value: '\u00A0', style, color: '#37352F', background: '#FFFFFF',
         });
       }
       setblocks(newArray);
@@ -167,36 +165,9 @@ function Editor({ IndividualFileData, source }) {
                       value: '\u00A0',
                       style: 'text',
                       color: '#37352F',
-                      bgcolor: '#FFFFFF',
+                      background: '#FFFFFF',
                     },
-                    {
-                      _id: uuidv4(),
-                      value: '\u00A0',
-                      style: 'text',
-                      color: '#37352F',
-                      bgcolor: '#FFFFFF',
-                    },
-                    {
-                      _id: uuidv4(),
-                      value: '\u00A0',
-                      style: 'text',
-                      color: '#37352F',
-                      bgcolor: '#FFFFFF',
-                    },
-                    {
-                      _id: uuidv4(),
-                      value: '\u00A0',
-                      style: 'text',
-                      color: '#37352F',
-                      bgcolor: '#FFFFFF',
-                    },
-                    {
-                      _id: uuidv4(),
-                      value: '\u00A0',
-                      style: 'text',
-                      color: '#37352F',
-                      bgcolor: '#FFFFFF',
-                    }]);
+                    ]);
                   }}
                 >
                   <div id={styles.icon}><DescriptionIcon /></div>
