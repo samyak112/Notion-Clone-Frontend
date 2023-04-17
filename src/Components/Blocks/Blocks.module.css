@@ -37,11 +37,16 @@
     position: relative;
 }
 
+.block_wrap{
+    display: flex;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
 .element_value{
     /* display: flex; */
     width: 100%;
-    word-wrap: break-word;
-    white-space: pre-line;
+    
 }
 
 .element_value[placeholder]:empty::before {
@@ -52,6 +57,11 @@
 .element_value[placeholder]:empty:focus::before {
     /* added this non breaking character here because otherwise the height was getting 0 as the div was getting empty */
     content: '\00a0';
+}
+
+.before_value{
+    /* border: 2px solid black; */
+    height: 100%;
 }
 
 .before_value::before{

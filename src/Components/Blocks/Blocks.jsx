@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
@@ -16,10 +17,10 @@ import ColorOptions from '../BlockOptions/ColorOptions';
 import DragOptions from '../BlockOptions/DragOptions';
 
 function Blocks({
-  BlockData, UpdateBlocks, DeleteBlock, UpdateBlockStyle, NumberedListCount,
+  BlockData, UpdateBlocks, DeleteBlock, UpdateBlockStyle, NumberedListCount, ChangeBlockPosition,
 }) {
   const dispatch = useDispatch();
-  const { BasicBlocks, BlockColors, BlockBackground } = BlockOptionsData;
+  const { BlockColors, BlockBackground } = BlockOptionsData;
 
   // Props data
   const { index, elem } = BlockData;
@@ -42,40 +43,6 @@ function Blocks({
   // Redux
   const DraggingDetails = useSelector((state) => state.TrackingDetails.DraggingDetails);
   const { current, direction } = DraggingDetails;
-
-  function InitiateDragging(ElementLocation) {
-    dispatch(ChangeTrackingDetails({ key: 'Started', value: true }));
-    dispatch(ChangeTrackingDetails({ key: 'source', value: ElementLocation }));
-  }
-
-  function TrackDraggedElement(ElementLocation) {
-    dispatch(ChangeTrackingDetails({ key: 'current', value: ElementLocation }));
-    if (current > ElementLocation) {
-      if (direction !== 'up') {
-        // console.log('up', { current, ElementLocation });
-        dispatch(ChangeTrackingDetails({ key: 'direction', value: 'up' }));
-      }
-    } else if (current < ElementLocation) {
-      if (direction !== 'down') {
-        // console.log('down', { current, ElementLocation });
-
-        dispatch(ChangeTrackingDetails({ key: 'direction', value: 'down' }));
-      }
-    }
-  }
-
-  function StopDragging() {
-    dispatch(ChangeTrackingDetails({ key: 'Started', value: false }));
-    dispatch(ChangeTrackingDetails({ key: 'destination', value: current }));
-    dispatch(ChangeTrackingDetails({ key: 'current', value: null }));
-    setisDragging(false);
-  }
-
-  function Moving() {
-    if (isDragging !== true) {
-      setisDragging(true);
-    }
-  }
 
   // used to limit unnecessary responses being sent to parent
   // component just because onblur was fired but the user didnt even changed anything
@@ -176,13 +143,11 @@ function Blocks({
     } else if (source === 'Enter') {
       if ((e.code === 'Enter' && CurrentValue.length === 0) || (e.code === 'Enter' && e.shiftKey === false && ElementValue.length !== 0 && ElementValue !== '')) {
         e.preventDefault();
-        console.log('herereee');
         if (style === 'to_do_list') {
           UpdateBlocks({
             ...CommonPayload, style, isChecked: false,
           });
         } else if (style === 'bullet_list' || style === 'number_list') {
-          console.log('here');
           UpdateBlocks({ ...CommonPayload, style });
         } else {
           UpdateBlocks({
@@ -191,49 +156,25 @@ function Blocks({
         }
       }
     }
-    // } else if (CurrentValue.length !== 0 && CurrentValue !== '') {
-    //   if (source === 'Enter') {
-    //     if (e.code === 'Enter' && e.shiftKey === false) {
-    //       e.preventDefault();
-    //       if (style === 'to_do_list') {
-    //         UpdateBlocks({
-    //           ...CommonPayload, style, isChecked: false,
-    //         });
-    //       } else if (style === 'bullet_list' || style === 'number_list') {
-    //         UpdateBlocks({ ...CommonPayload, style });
-    //       } else {
-    //         UpdateBlocks({
-    //           ...CommonPayload, style: 'text',
-    //         });
-    //       }
-    //     }
-    //   } else {
-    //     UpdateBlocks({
-    //       IsNewBlock: true, IsDuplicate: false, style: 'text',
-    //     });
-    //   }
-    // } else if (e.code === 'Enter' && e.target.innerText.length === 0) {
-    //   e.preventDefault();
-    //   UpdateBlocks({
-    //     ...CommonPayload, style: 'text',
-    //   });
-    // }
   }
 
   function ChangeBlockStyle(BlockValue) {
     let payload = null;
+    const CommonPayload = {
+      _id, value: ElementValue, style: BlockValue, color, background,
+    };
+
     if (BlockValue === 'to_do_list') {
       payload = {
         BlockData: {
-          IsNewBlock: false, isChecked: false, style: BlockValue, value: ElementValue, _id,
+          isChecked: false, ...CommonPayload,
         },
         index,
       };
     } else {
-      console.log('came in this block style');
       payload = {
         BlockData: {
-          IsNewBlock: false, style: BlockValue, value: ElementValue, _id,
+          ...CommonPayload,
         },
         index,
       };
@@ -258,7 +199,7 @@ function Blocks({
     UpdateBlocks(payload, 'checkbox');
   }
 
-  function BeforePsuedoValuetoRender() {
+  function BeforePsuedoValueToRender() {
     switch (style) {
       case 'bullet_list':
         return { '--content--var': '"•"' };
@@ -269,42 +210,79 @@ function Blocks({
     }
   }
 
-  // function NewElementPositionHighlight() {
-  //   const borderStyle = null;
-  //   if (current === index) {
-  //     if (direction === 'up') {
-  //       return {
-  //         borderTop: '2px solid #65a6e4',
-  //       };
-  //     }
-  //     if (direction === 'down') {
-  //       return {
-  //         borderBottom: '2px solid #65a6e4',
-  //       };
-  //     }
-  //   }
-  // }
+  function NewElementPositionHighlight() {
+    const CommonPayload = { color, background };
+    if (current === index) {
+      return { borderTop: '2px solid #65a6e4', ...CommonPayload };
+    }
+    return { ...CommonPayload };
+  }
+
+  function TrackDraggedElement(ElementLocation) {
+    dispatch(ChangeTrackingDetails({ key: 'current', value: ElementLocation }));
+    if (current > ElementLocation) {
+      if (direction !== 'up') {
+        dispatch(ChangeTrackingDetails({ key: 'direction', value: 'up' }));
+      }
+    } else if (current < ElementLocation) {
+      if (direction !== 'down') {
+        dispatch(ChangeTrackingDetails({ key: 'direction', value: 'down' }));
+      }
+    }
+  }
+
+  function StopDragging() {
+    dispatch(ChangeTrackingDetails({ key: 'current', value: null }));
+    setisDragging(false);
+    ChangeBlockPosition({
+      NewIndex: current, CurrentIndex: index, data: elem, direction,
+    });
+  }
+
+  function Moving() {
+    if (isDragging !== true) {
+      setisDragging(true);
+    }
+  }
 
   return (
-    <div className={styles.main} style={BlockStyles[0][style].style}>
+    <div
+      className={styles.main}
+      style={BlockStyles[0][style].style}
+      draggable={isDragging}
+      onDragEnter={() => { TrackDraggedElement(index); }}
+      onDragEnd={() => { StopDragging(); }}
+    >
       <div
         className={styles.overlay_container}
         style={OpenBlockChangeOptions || OpenBlockStyleOptions.state ? { width: '100vw', height: '100vh' } : { width: '0vw', height: '0vh' }}
         onClick={() => { CloseOptions(); }}
       />
+      {/* BLock Options */}
+      <div
+        className={styles.options}
+        style={OpenBlockStyleOptions.state || OpenBlockChangeOptions ? { display: 'none' } : { display: 'flex' }}
+        onMouseDown={() => { Moving(); }}
+      >
+        <div
+          className={styles.icons}
+          onClick={(e) => { AddNewBlock('Add', e); }}
+        >
+          <Add />
+        </div>
+        <div className={styles.icons} onClick={() => { setOpenBlockChangeOptions(true); }}>
+          <DragIndicator />
+        </div>
+      </div>
       <div
         className={styles.content_blocks}
-        draggable={isDragging}
+        // draggable
         contentEditable
-        onDragStart={() => { InitiateDragging(index); }}
-        onDragEnter={() => { TrackDraggedElement(index); }}
-        onDragEnd={() => { StopDragging(); }}
         onBlur={(e) => { UpdateBlockValue(e); }}
         onInput={HandleInput}
-        onKeyDown={(e) => {
-          AddNewBlock('Enter', e);
-        }}
-        style={{ color, background }}
+        onKeyDown={(e) => { AddNewBlock('Enter', e); }}
+        style={NewElementPositionHighlight()}
+
       >
 
         {
@@ -334,20 +312,21 @@ function Blocks({
               </>
             )
             : (
-              <>
+              <div className={styles.block_wrap}>
                 <div
                   className={styles.before_value}
                   contentEditable={false}
-                  style={BeforePsuedoValuetoRender()}
+                  style={BeforePsuedoValueToRender()}
                 />
+                {/* made another div for placeholder because otherwise it wasnt
+                considered as empty and placeholder is only available when div is empty */}
                 <div
                   placeholder={BlockStyles[0][style].name === 'Text' ? 'Press / for commands' : BlockStyles[0][style].name}
                   className={styles.element_value}
                 >
                   {value}
-
                 </div>
-              </>
+              </div>
             )
         }
       </div>
@@ -378,27 +357,9 @@ function Blocks({
       {/* Drag button Options */}
       <div
         className={styles.drag_options}
-        style={OpenBlockChangeOptions ? { display: 'block' } : { display: 'none' }}
+        style={OpenBlockChangeOptions ? { display: 'block', fontSize: '1rem' } : { display: 'none' }}
       >
         <DragOptions DeleteBlock={DeleteBlock} AddNewBlock={AddNewBlock} index={index} />
-      </div>
-
-      {/* BLock Options */}
-      <div
-        className={styles.options}
-        style={OpenBlockStyleOptions.state || OpenBlockChangeOptions ? { display: 'none' } : { display: 'flex' }}
-        // onMouseMove={() => { Moving(); }}
-        onMouseDown={() => { Moving(); }}
-      >
-        <div
-          className={styles.icons}
-          onClick={(e) => { AddNewBlock('Add', e); }}
-        >
-          <Add />
-        </div>
-        <div className={styles.icons} onClick={() => { setOpenBlockChangeOptions(true); }}>
-          <DragIndicator />
-        </div>
       </div>
     </div>
   );

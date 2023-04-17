@@ -5,7 +5,7 @@ export const ElementTrack = createSlice({
   name: 'TrackingDetails',
   initialState: {
     DraggingDetails: {
-      Started: null, source: null, destination: null, current: null, direction: null,
+      current: null, direction: null,
     },
   },
   reducers: {

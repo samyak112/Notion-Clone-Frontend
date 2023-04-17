@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable no-underscore-dangle */
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -19,7 +19,7 @@ function Editor({ IndividualFileData, source }) {
 
   // states
   const [blocks, setblocks] = useState([]);
-  console.log(blocks);
+
   // const [CurrentEditedBlock, setCurrentEditedBlock] = useState({
   //   _id: null, value: null, style: null,
   // });
@@ -38,6 +38,10 @@ function Editor({ IndividualFileData, source }) {
   const { CoverPhoto, values, ref_id } = IndividualFileData;
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    setblocks(values);
+  }, [values]);
+
   function FileDetailsToRender() {
     if (source === 'new') {
       return { fileName: FileName, icon: Icon };
@@ -52,6 +56,7 @@ function Editor({ IndividualFileData, source }) {
   const { fileName, icon } = RenderedFileDetails;
 
   function UpdateBlocks(payload, type = 'default') {
+    console.log('update blocks ran');
     const {
       index, value, IsNewBlock, style,
     } = payload;
@@ -71,10 +76,10 @@ function Editor({ IndividualFileData, source }) {
       if (payload.IsDuplicate) {
         newArray.splice(index + 1, 0, { _id: uuidv4(), value, style });
       } else {
-        console.log(payload);
+        console.log(payload, 'this is the new one');
         // this value is a non-breaking space character
         newArray.splice(index + 1, 0, {
-          _id: uuidv4(), value: '', style, color: '#37352F', background: '#FFFFFF',
+          _id: uuidv4(), color: '#37352F', background: '#FFFFFF', value: '', style,
         });
       }
       setblocks(newArray);
@@ -82,16 +87,34 @@ function Editor({ IndividualFileData, source }) {
   }
 
   function UpdateBlockStyle(payload) {
+    console.log('update blocks ran');
+
     const newArray = [...blocks];
     newArray[payload.index] = payload.BlockData;
     setblocks(newArray);
   }
 
   function DeleteBlock(payload) {
+    console.log('update blocks ran');
+
     const newArray = [...blocks];
     // payload is the index here
     newArray.splice(payload, 1);
     setblocks(newArray);
+  }
+
+  function ChangeBlockPosition(payload) {
+    const {
+      NewIndex, CurrentIndex, data, direction,
+    } = payload;
+    const NewArray = [...blocks];
+    NewArray.splice(CurrentIndex, 1);
+    if (direction === 'up') {
+      NewArray.splice(NewIndex, 0, data);
+    } else {
+      NewArray.splice(NewIndex - 1, 0, data);
+    }
+    setblocks(NewArray);
   }
 
   return (
@@ -151,10 +174,10 @@ function Editor({ IndividualFileData, source }) {
                     UpdateBlocks={UpdateBlocks}
                     DeleteBlock={DeleteBlock}
                     UpdateBlockStyle={UpdateBlockStyle}
+                    ChangeBlockPosition={ChangeBlockPosition}
                     NumberedListCount={NumberedListCount.current}
                   />
                 );
-                return null;
               })
               : (
                 <div
