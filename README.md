@@ -34,7 +34,4 @@ Linting Tool -
   - [x] Numbered Points
   - [x] TO-Do List
   - [x] Heading
-- Re Order Blocks Using Drag and Drop
-
-# Near Future Features :-
-- [ ] Ability to add and delete files from Explorer
+- [x] Re Order Blocks Using Drag and Drop
