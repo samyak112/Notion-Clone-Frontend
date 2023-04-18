@@ -27,7 +27,14 @@ Linting Tool -
 - [x] Explorer can be dragged to increase or decrease its width
 - [x] User can close and open subfiles in the explorer using arrow (with static data for now)
 - [x] Redirects User to the last Edited File automatically , irrespective of if someone deleted something from local storage or working on a new device you'll be redirected to the last edited file and if new user then user will be redirected to 'Get Started' File 
+- [x] Change File Icon and FileName in Realtime in both Explorer and Editor
+- [x] Add Cover Photo and Repsoitin it
+- [x] Multiple Features to edit Block which includes :-
+  - [x] Bullet Points
+  - [x] Numbered Points
+  - [x] TO-Do List
+  - [x] Heading
+- Re Order Blocks Using Drag and Drop
 
 # Near Future Features :-
 - [ ] Ability to add and delete files from Explorer
-- [ ] Drag and drop to change order of files in Explorer
