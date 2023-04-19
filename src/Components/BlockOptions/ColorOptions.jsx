@@ -14,8 +14,12 @@ function ColorOptions({
       <div className={styles.option_heading}>
         {Heading}
       </div>
-      {MappedData.map((item) => (
-        <div className={styles.basic_block} onClick={() => { ChangeBlockColor(item[Identifier], Identifier); }}>
+      {MappedData.map((item, key) => (
+        <div
+          key={item.id}
+          className={styles.basic_block}
+          onClick={() => { ChangeBlockColor(item[Identifier], Identifier); }}
+        >
           <div className={styles.block_icon} style={{ [Identifier]: item[Identifier] }}>
             {' '}
             A

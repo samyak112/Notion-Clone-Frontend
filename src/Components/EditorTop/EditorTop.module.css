@@ -1,3 +1,7 @@
+:root{
+    --link_color:#c1bebe
+}
+
 #top{
     position: relative;
 }
@@ -43,6 +47,65 @@
     background-color: #dedada;
 }
 
+#change_cover_wrap{
+    z-index: 1;
+    position: absolute;
+    top: 2rem;
+    height: 25rem;
+    overflow-y: scroll;
+    width: 33rem;
+    right: 0px;
+    background-color: white;
+    padding:.5rem ;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 10%), 0 8px 16px rgb(0 0 0 / 10%);
+}
+
+#search_bar input{
+    width: 100%;
+    background-color: #F7F7F5;
+    border: 1px solid #c9c9c7;
+    padding: .3rem;
+    color: black;
+}
+
+#results{
+    margin-top: .5rem;
+    display: none;
+    grid-template-columns: repeat(auto-fit,minmax(6rem,1fr));
+    margin-right: 1rem;
+    gap: 1rem;
+    font-size: .8rem;
+}
+
+.unsplash_image_wrap{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(7rem,1fr));    
+}
+
+.image_wrap{
+    height: 5rem;
+    width: 7rem;
+}
+
+.actual_image{
+    height: inherit;
+    width: inherit;
+    object-fit: cover;
+}
+
+.image_creator{
+    display: flex;
+    gap: .5rem;
+    color: var(--link_color);
+    overflow: hidden;
+    white-space: nowrap; 
+}
+
+a{
+    color: var(--link_color);
+}
+
+
 #centered_area_wrap{
     height: 4rem;
     display: flex;
@@ -50,9 +113,19 @@
     position: relative;
 }
 
-#save_button{
+#save_button_wrap{
+    width: 100%;
+    position: absolute;
+    display: flex;
     justify-content: flex-end;
 }
+
+#save_button{
+    border-radius: 5px;
+    background-color: #ECC5FB;
+    width: 8rem;
+}
+
 
 #centered_area_inner_wrap{
     width: 55%;
@@ -103,6 +176,7 @@
     padding-block: .2rem;
     border-radius: 5px;
     cursor: pointer;
+    z-index: 1;
 }
 
 .options_comps:hover{
@@ -112,3 +186,26 @@
 #top:hover .options_comps{
     display: flex;
 }
+
+
+.loading {
+    height: 0;
+    width: 0;
+    padding: 15px;
+    border: 6px solid #ccc;
+    border-right-color: #888;
+    border-radius: 22px;
+    animation: rotate 1s infinite linear;
+    /* left, top and position just for the demo! */
+    position: absolute;
+    left: 50%;
+    top: 50%;
+  }
+  
+  @keyframes rotate {
+    /* 100% keyframe for  clockwise. 
+       use 0% instead for anticlockwise */
+    100% {
+      -webkit-transform: rotate(360deg);
+    }
+  }

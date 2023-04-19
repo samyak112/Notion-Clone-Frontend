@@ -17,20 +17,10 @@ function Editor({ IndividualFileData, source }) {
   const InitialFileDetails = useSelector((state) => state.ExplorerDetails.InitialValues);
   const CurrentFileId = useSelector((state) => state.ExplorerDetails.current_id);
 
-  // states
+  // state
   const [blocks, setblocks] = useState([]);
 
-  // const [CurrentEditedBlock, setCurrentEditedBlock] = useState({
-  //   _id: null, value: null, style: null,
-  // });
-  const [DraggingDetails, setDraggingDetails] = useState({
-    Started: false, source: null, destination: null, current: null, direction: null,
-  });
-
   // ref
-  // this ref is maintainted to check if the block which is being edited is the first block
-  // or not , this maintained for the logic which is being used to save the blocks
-  // const IsInitialBlock = useRef(true);
   const NumberedListCount = useRef(0);
 
   // destructured props
@@ -38,25 +28,26 @@ function Editor({ IndividualFileData, source }) {
   const { CoverPhoto, values, ref_id } = IndividualFileData;
   const dispatch = useDispatch();
 
+  const url = import.meta.env.VITE_URL;
+
   useEffect(() => {
     setblocks(values);
   }, [values]);
 
   function FileDetailsToRender() {
-    if (source === 'new') {
-      return { fileName: FileName, icon: Icon };
+    if (source === 'new' || CurrentFileId === ref_id) {
+      return { RenderedFileName: FileName, RenderedIcon: Icon };
     }
-    if (CurrentFileId === ref_id) {
-      return { fileName: FileName, icon: Icon };
-    }
-    return { fileName: InitialFileDetails.FileName, icon: InitialFileDetails.Icon };
+    // if (CurrentFileId === ref_id) {
+    //   return { fileName: FileName, icon: Icon };
+    // }
+    return { RenderedFileName: InitialFileDetails.FileName, RenderedIcon: InitialFileDetails.Icon };
   }
 
   const RenderedFileDetails = FileDetailsToRender();
-  const { fileName, icon } = RenderedFileDetails;
+  const { RenderedFileName, RenderedIcon } = RenderedFileDetails;
 
   function UpdateBlocks(payload, type = 'default') {
-    console.log('update blocks ran');
     const {
       index, value, IsNewBlock, style,
     } = payload;
@@ -87,16 +78,12 @@ function Editor({ IndividualFileData, source }) {
   }
 
   function UpdateBlockStyle(payload) {
-    console.log('update blocks ran');
-
     const newArray = [...blocks];
     newArray[payload.index] = payload.BlockData;
     setblocks(newArray);
   }
 
   function DeleteBlock(payload) {
-    console.log('update blocks ran');
-
     const newArray = [...blocks];
     // payload is the index here
     newArray.splice(payload, 1);
@@ -117,12 +104,43 @@ function Editor({ IndividualFileData, source }) {
     setblocks(NewArray);
   }
 
+  async function SaveFileData(payload) {
+    let FinalPayload = {
+      ...payload, BlockValues: blocks, FileName: null, Icon: null,
+    };
+    if (InitialFileDetails.FileName !== CurrentFileDetails.FileName) {
+      FinalPayload = {
+        ...FinalPayload,
+        FileName: CurrentFileDetails.FileName,
+        Icon: CurrentFileDetails.Icon,
+      };
+    }
+
+    console.log(FinalPayload, 'this is final');
+    const res = await fetch(`${url}/FileData`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth-token': localStorage.getItem('token'),
+      },
+      body: JSON.stringify({
+        FinalPayload, ref_id,
+      }),
+    });
+    const response = await res.json();
+    // if (response.status === 200) {
+    //   dispatch(ReloadData(true));
+    // }
+  }
+
   return (
     <div id={styles.main}>
       <div id={styles.top}>
-        <EditorTop FileDetails={{
-          CoverPhoto, Icon, ref_id, icon,
-        }}
+        <EditorTop
+          FileDetails={{
+            CoverPhoto, Icon, ref_id, RenderedIcon,
+          }}
+          SaveFileData={SaveFileData}
         />
       </div>
 
@@ -131,7 +149,7 @@ function Editor({ IndividualFileData, source }) {
           <div className={styles.editor_comps} id={styles.title}>
             <input
               className={styles.input_field}
-              value={fileName}
+              value={RenderedFileName}
               onClick={() => {
                 if (source === 'old') {
                   if (CurrentFileId !== ref_id) {

@@ -10,8 +10,9 @@ function BasicOptions({ ChangeBlockStyle, style }) {
         Basic Block
       </div>
       {
-          BasicBlocks.map((item) => (
+          BasicBlocks.map((item, key) => (
             <div
+              key={item.id}
               className={styles.basic_block}
               onClick={() => {
                 ChangeBlockStyle(item.value, style);
