@@ -225,9 +225,9 @@ function IndividualFiles({ data, margin }) {
       <div>
         <div style={{ display: expand === false ? 'none' : 'block' }}>
           {
-            data.items === undefined || data.items.length === 0
+            data.children === undefined || data.children.length === 0
               ? <div id={styles.empty_page} style={{ marginLeft: `${margin + 2}rem` }}>No pages inside</div>
-              : data.items.map((elem) => (
+              : data.children.map((elem) => (
                 <div>
 
                   {/* Here margin is being sent as a prop so that it can
@@ -280,7 +280,7 @@ function IndividualFiles({ data, margin }) {
               <div id={styles.modal_wrap}>
                 {/* added this IndividualFileData prop so
                 that editor can use the default props from there */}
-                <Editor source="new" IndividualFileData={{ CoverPhoto: null, values: [] }} />
+                <Editor source="new" IndividualFileData={{ CoverPhoto: null, values: [], id: _id }} />
               </div>
             </Modal>
 

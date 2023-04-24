@@ -53,6 +53,7 @@ function EditorTop({ FileDetails, SaveFileData }) {
           setIsLoading(false);
         })
         .catch((error) => {
+          setIsLoading(false);
           console.log(error);
         });
     } else {
@@ -63,6 +64,7 @@ function EditorTop({ FileDetails, SaveFileData }) {
           setIsLoading(false);
         })
         .catch((error) => {
+          setIsLoading(false);
           console.log(error);
         });
     }
@@ -84,8 +86,6 @@ function EditorTop({ FileDetails, SaveFileData }) {
     }
   }
 
-  console.log(IsLoading);
-
   function TrackCoverPhotoPosition(e) {
     const { IsMoving, CurrentValue } = ImageRepositioning;
     if (IsMoving === true) {
@@ -99,16 +99,20 @@ function EditorTop({ FileDetails, SaveFileData }) {
 
   function SaveDetails() {
     let payload = { CoverPhotoData: null };
-    const { value, Position } = CoverPhoto;
     const { Lastvalue } = ImageRepositioning;
-    if (CurrentCoverPhoto !== value) {
-      payload = { CoverPhotoData: { CoverPhoto: CurrentCoverPhoto } };
-    }
-    if (Lastvalue !== Position) {
-      payload = { ...payload, CoverPhotoData: { ...payload.CoverPhotoData, Position: Lastvalue } };
-    }
+    if (CoverPhoto != null) {
+      const { value, Position } = CoverPhoto;
+      if (CurrentCoverPhoto !== value) {
+        payload = { CoverPhotoData: { CoverPhoto: CurrentCoverPhoto } };
+      }
+      if (Lastvalue !== Position) {
+        payload = { ...payload, CoverPhotoData: { ...payload.CoverPhotoData, Position: Lastvalue } };
+      }
 
-    SaveFileData(payload);
+      SaveFileData(payload);
+    } else {
+      SaveFileData({ CoverPhotoData: { Position: Lastvalue, CoverPhoto: CurrentCoverPhoto } });
+    }
   }
 
   function GetRandomCoverPhoto() {
@@ -209,7 +213,7 @@ function EditorTop({ FileDetails, SaveFileData }) {
       <div id={styles.centered_area_wrap}>
         <div
           id={styles.change_cover_wrap}
-          style={ChangeCoverPhoto ? { display: 'grid' } : { display: 'none' }}
+          style={ChangeCoverPhoto ? { display: 'block' } : { display: 'none' }}
           onBlur={() => { setChangeCoverPhoto(false); }}
         >
           <div className={styles.change_cover_comps} id={styles.search_bar}>
@@ -226,7 +230,12 @@ function EditorTop({ FileDetails, SaveFileData }) {
                       : UnsplashPicturesList.map((elem) => (
                         <div className={styles.unsplash_image_wrap}>
                           <div className={styles.image_wrap}>
-                            <img onClick={() => { setCurrentCoverPhoto(elems.urls.regular); }} className={styles.actual_image} src={elem.urls.regular} alt="" />
+                            <img
+                              onClick={() => { setCurrentCoverPhoto(elem.urls.regular); }}
+                              className={styles.actual_image}
+                              src={elem.urls.regular}
+                              alt=""
+                            />
                           </div>
                           <div className={styles.image_creator}>
                             <div>By</div>
@@ -234,7 +243,7 @@ function EditorTop({ FileDetails, SaveFileData }) {
                           </div>
                         </div>
                       ))
-                    : ''
+                    : 'Limit Reached for Fetching Results'
                 }
           </div>
         </div>

@@ -21,7 +21,7 @@ function Register() {
       },
     });
     const data = await res.json();
-    setFileData(data.data);
+    setFileData(data.tree);
   };
 
   useEffect(() => {

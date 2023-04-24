@@ -48,6 +48,9 @@ function Blocks({
   // component just because onblur was fired but the user didnt even changed anything
   function HandleInput(e) {
     const Currentvalue = e.target.innerText;
+
+    // Nodename is added for checkbox because
+    // these functions are triggered by clicking on this too because of event bubbling
     const NodeName = e.target.nodeName;
     const CurrentChar = e.nativeEvent.data;
 
@@ -57,7 +60,7 @@ function Blocks({
       IsEdited.current = true;
     }
 
-    if (Currentvalue === '' && NodeName !== 'INPUT') {
+    if (Currentvalue.length === 0 && NodeName !== 'INPUT') {
       DeleteBlock(index);
     }
 
@@ -137,7 +140,9 @@ function Blocks({
         });
       }
     } else if (source === 'Add') {
-      if (!OpenBlockStyleOptions.state) {
+      if (ElementValue.length !== 0) {
+        UpdateBlocks({ ...CommonPayload, style: 'text' });
+      } else {
         setOpenBlockStyleOptions({ ...OpenBlockStyleOptions, state: true });
       }
     } else if (source === 'Enter') {
@@ -359,7 +364,13 @@ function Blocks({
         className={styles.drag_options}
         style={OpenBlockChangeOptions ? { display: 'block', fontSize: '1rem' } : { display: 'none' }}
       >
-        <DragOptions DeleteBlock={DeleteBlock} AddNewBlock={AddNewBlock} index={index} />
+        <DragOptions
+          AddNewBlock={AddNewBlock}
+          ChangeBlockStyle={ChangeBlockStyle}
+          ChangeBlockColor={ChangeBlockColor}
+          DeleteBlock={DeleteBlock}
+          index={index}
+        />
       </div>
     </div>
   );

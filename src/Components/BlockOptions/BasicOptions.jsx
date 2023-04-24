@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './BlockOptions.module.css';
 import BlockOptionsData from '../Blocks/BlockOptionsData';
 
-function BasicOptions({ ChangeBlockStyle, style }) {
+function BasicOptions({ ChangeBlockStyle }) {
   const { BasicBlocks } = BlockOptionsData;
   return (
     <>
@@ -15,7 +15,7 @@ function BasicOptions({ ChangeBlockStyle, style }) {
               key={item.id}
               className={styles.basic_block}
               onClick={() => {
-                ChangeBlockStyle(item.value, style);
+                ChangeBlockStyle(item.value);
               }}
             >
               <div className={styles.block_icon}>

@@ -9,26 +9,45 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import styles from './BlockOptions.module.css';
 import ColorOptions from './ColorOptions';
 import BlockOptionsData from '../Blocks/BlockOptionsData';
+import BasicOptions from './BasicOptions';
 
 function DragOptions({
-  DeleteBlock, AddNewBlock, index, Heading, ChangeBlockColor, text,
+  DeleteBlock, AddNewBlock, index, ChangeBlockColor, ChangeBlockStyle,
 }) {
   const [DragOptionState, setDragOptionState] = useState({ TurnInto: false, Color: false });
 
   const { BlockColors, BlockBackground } = BlockOptionsData;
 
-  function HandleDragOptions(option) {
+  function HandleDragOptions(e) {
+    const DivName = e.target.innerText;
     const { TurnInto, Color } = DragOptionState;
-    if (option === 'Color') {
-      if (Color === false) {
-        setDragOptionState({ ...DragOptionState, Color: true });
+
+    if (e.target.nodeName === 'DIV') {
+      if (DivName === 'Color') {
+        setDragOptionState({ TurnInto: false, Color: true });
+      } else if (DivName === 'Turn into') {
+        setDragOptionState({ TurnInto: true, Color: false });
+      } else if ((DivName === 'Delete' || DivName === 'Duplicate') && (TurnInto === true || Color === true)) {
+        setDragOptionState({ TurnInto: false, Color: false });
       }
-    } else if (TurnInto === false) {
-      setDragOptionState({ ...DragOptionState, TurnInto: true });
     }
   }
+
+  function ChangeBlockColor2(ColorValue, type) {
+    ChangeBlockColor(ColorValue, type);
+    setDragOptionState({ TurnInto: false, Color: false });
+  }
+
+  function ChangeBlockStyle2(BlockValue) {
+    ChangeBlockStyle(BlockValue);
+    setDragOptionState({ TurnInto: false, Color: false });
+  }
+
   return (
-    <>
+    <div
+      onMouseOver={(e) => { HandleDragOptions(e); }}
+    >
+
       <div className={styles.drag_options_comps} onClick={() => { DeleteBlock(index); }}>
         <div className={styles.drag_option_icon}><DeleteOutlineOutlinedIcon /></div>
         <div className={styles.drag_option_text}>Delete</div>
@@ -39,7 +58,6 @@ function DragOptions({
       </div>
       <div
         className={styles.drag_options_comps}
-        onMouseOver={() => { HandleDragOptions('TurnInto'); }}
       >
         <div className={styles.drag_options_left}>
           <div className={styles.drag_option_icon}><ImportExportOutlinedIcon /></div>
@@ -47,18 +65,17 @@ function DragOptions({
         </div>
         <div className={styles.drag_options_right}>
           <ArrowForwardIosIcon fontSize="small" />
-          {/* <div
+          <div
             className={styles.open_drag_options}
-            style={DragOptionState.TurnInto ? { display: 'flex' } : { display: 'none' }}
+            style={DragOptionState.TurnInto ? { display: 'block' } : { display: 'none' }}
           >
-            hii
-          </div> */}
+            <BasicOptions ChangeBlockStyle={ChangeBlockStyle2} />
+          </div>
         </div>
 
       </div>
       <div
         className={styles.drag_options_comps}
-        onMouseOver={() => { HandleDragOptions('Color'); }}
       >
         <div className={styles.drag_options_left}>
           <div className={styles.drag_option_icon}><FormatPaintOutlinedIcon /></div>
@@ -68,17 +85,16 @@ function DragOptions({
           <ArrowForwardIosIcon fontSize="small" />
           <div
             className={styles.open_drag_options}
-            style={DragOptionState.Color ? { dissplay: 'flex' } : { display: 'none' }}
+            style={DragOptionState.Color ? { display: 'block' } : { display: 'none' }}
           >
-            <ColorOptions Heading="Color" MappedData={BlockColors} ChangeBlockColor={ChangeBlockColor} />
-          <ColorOptions Heading="Background" MappedData={BlockBackground} ChangeBlockColor={ChangeBlockColor} />
-          {/* hihiiiiiasdasdaasdsadasdsdssadsdadd */}
+            <ColorOptions Heading="Color" MappedData={BlockColors} ChangeBlockColor={ChangeBlockColor2} />
+            <ColorOptions Heading="Background" MappedData={BlockBackground} ChangeBlockColor={ChangeBlockColor2} />
           </div>
         </div>
 
       </div>
 
-    </>
+    </div>
   );
 }
 

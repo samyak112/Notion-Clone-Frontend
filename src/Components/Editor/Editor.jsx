@@ -29,7 +29,7 @@ function Editor({ IndividualFileData, source }) {
   const dispatch = useDispatch();
 
   const url = import.meta.env.VITE_URL;
-
+  console.log(values)
   useEffect(() => {
     setblocks(values);
   }, [values]);
@@ -67,8 +67,6 @@ function Editor({ IndividualFileData, source }) {
       if (payload.IsDuplicate) {
         newArray.splice(index + 1, 0, { _id: uuidv4(), value, style });
       } else {
-        console.log(payload, 'this is the new one');
-        // this value is a non-breaking space character
         newArray.splice(index + 1, 0, {
           _id: uuidv4(), color: '#37352F', background: '#FFFFFF', value: '', style,
         });
@@ -116,21 +114,34 @@ function Editor({ IndividualFileData, source }) {
       };
     }
 
-    console.log(FinalPayload, 'this is final');
-    const res = await fetch(`${url}/FileData`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-auth-token': localStorage.getItem('token'),
-      },
-      body: JSON.stringify({
-        FinalPayload, ref_id,
-      }),
-    });
-    const response = await res.json();
-    // if (response.status === 200) {
-    //   dispatch(ReloadData(true));
-    // }
+    if (source === 'old') {
+      const res = await fetch(`${url}/FileData`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': localStorage.getItem('token'),
+        },
+        body: JSON.stringify({
+          FinalPayload, ref_id,
+        }),
+      });
+      const response = await res.json();
+      // if (response.status === 200) {
+      //   dispatch(ReloadData(true));
+      // }
+    } else {
+      const res = await fetch(`${url}/FileData`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': localStorage.getItem('token'),
+        },
+        body: JSON.stringify({
+          FinalPayload, id: IndividualFileData.id,
+        }),
+      });
+      const response = await res.json();
+    }
   }
 
   return (

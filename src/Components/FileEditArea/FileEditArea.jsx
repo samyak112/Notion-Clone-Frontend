@@ -32,6 +32,7 @@ function FileEditArea() {
     });
     const data = await res.json();
     setIndividualFileData(data.FileData);
+    console.log(data,'this is that data')
   };
 
   useEffect(() => {

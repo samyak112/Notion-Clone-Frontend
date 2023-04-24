@@ -3,7 +3,7 @@ import styles from './BlockOptions.module.css';
 import BlockOptionsData from '../Blocks/BlockOptionsData';
 
 function ColorOptions({
-  Heading, MappedData, ChangeBlockColor, text,
+  Heading, MappedData, ChangeBlockColor,
 }) {
   const { BlockColors, BlockBackground } = BlockOptionsData;
 

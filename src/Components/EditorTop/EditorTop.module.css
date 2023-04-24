@@ -70,7 +70,7 @@
 
 #results{
     margin-top: .5rem;
-    display: none;
+    display: grid;
     grid-template-columns: repeat(auto-fit,minmax(6rem,1fr));
     margin-right: 1rem;
     gap: 1rem;
