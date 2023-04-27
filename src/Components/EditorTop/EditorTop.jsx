@@ -103,7 +103,7 @@ function EditorTop({ FileDetails, SaveFileData }) {
     if (CoverPhoto != null) {
       const { value, Position } = CoverPhoto;
       if (CurrentCoverPhoto !== value) {
-        payload = { CoverPhotoData: { CoverPhoto: CurrentCoverPhoto } };
+        payload = { CoverPhotoData: { value: CurrentCoverPhoto } };
       }
       if (Lastvalue !== Position) {
         payload = { ...payload, CoverPhotoData: { ...payload.CoverPhotoData, Position: Lastvalue } };
@@ -111,7 +111,7 @@ function EditorTop({ FileDetails, SaveFileData }) {
 
       SaveFileData(payload);
     } else {
-      SaveFileData({ CoverPhotoData: { Position: Lastvalue, CoverPhoto: CurrentCoverPhoto } });
+      SaveFileData({ CoverPhotoData: { Position: Lastvalue, value: CurrentCoverPhoto } });
     }
   }
 

@@ -6,12 +6,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import DescriptionIcon from '@mui/icons-material/Description';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
+import Alert from '@mui/material/Alert';
 import styles from './Editor.module.css';
-import { InitialFileName, ChangeCurrentFileId, CurrentFileName } from '../../Redux/ExplorerSlice';
+import {
+  InitialFileName, ChangeCurrentFileId, CurrentFileName, UpdateTree,
+} from '../../Redux/ExplorerSlice';
 import EditorTop from '../EditorTop/EditorTop';
 import Blocks from '../Blocks/Blocks';
 
-function Editor({ IndividualFileData, source }) {
+function Editor({ IndividualFileData, source, Root = null }) {
   // redux
   const CurrentFileDetails = useSelector((state) => state.ExplorerDetails.CurrentValue);
   const InitialFileDetails = useSelector((state) => state.ExplorerDetails.InitialValues);
@@ -19,6 +22,7 @@ function Editor({ IndividualFileData, source }) {
 
   // state
   const [blocks, setblocks] = useState([]);
+  const [ShowAlert, setShowAlert] = useState(false);
 
   // ref
   const NumberedListCount = useRef(0);
@@ -29,7 +33,6 @@ function Editor({ IndividualFileData, source }) {
   const dispatch = useDispatch();
 
   const url = import.meta.env.VITE_URL;
-  console.log(values)
   useEffect(() => {
     setblocks(values);
   }, [values]);
@@ -106,6 +109,7 @@ function Editor({ IndividualFileData, source }) {
     let FinalPayload = {
       ...payload, BlockValues: blocks, FileName: null, Icon: null,
     };
+
     if (InitialFileDetails.FileName !== CurrentFileDetails.FileName) {
       FinalPayload = {
         ...FinalPayload,
@@ -130,22 +134,38 @@ function Editor({ IndividualFileData, source }) {
       //   dispatch(ReloadData(true));
       // }
     } else {
-      const res = await fetch(`${url}/FileData`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': localStorage.getItem('token'),
-        },
-        body: JSON.stringify({
-          FinalPayload, id: IndividualFileData.id,
-        }),
-      });
-      const response = await res.json();
+      const { BlockValues, FileName } = FinalPayload;
+      if (FileName === '' || BlockValues.length === 0) {
+        setShowAlert(true);
+      } else {
+        const res = await fetch(`${url}/FileData`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': localStorage.getItem('token'),
+          },
+          body: JSON.stringify({
+            FinalPayload, id: IndividualFileData.id,
+          }),
+        });
+        const response = await res.json();
+        if (response.status === 200) {
+          dispatch(UpdateTree({
+            Root,
+            Icon: CurrentFileDetails.Icon,
+            FileName: CurrentFileDetails.FileName,
+            NewFileId: response.id,
+          }));
+        }
+      }
     }
   }
 
   return (
     <div id={styles.main}>
+      <div id={styles.error_message} style={ShowAlert ? { display: 'block' } : { display: 'none' }}>
+        <Alert severity="error" onClose={() => { setShowAlert(false); }}>Add File Name and minimum one Block</Alert>
+      </div>
       <div id={styles.top}>
         <EditorTop
           FileDetails={{

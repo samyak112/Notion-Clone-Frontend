@@ -7,17 +7,46 @@ import AddIcon from '@mui/icons-material/Add';
 import Skeleton from '@mui/material/Skeleton';
 import jwt from 'jwt-decode';
 import styles from './explorer.module.css';
-import { ExplorerWidthValue, StartTracking } from '../../Redux/ExplorerSlice';
+import { ExplorerWidthValue, StartTracking, ReloadData } from '../../Redux/ExplorerSlice';
 import IndividualFiles from '../IndividualFiles/IndividualFiles';
 
-function Explorer({ FileData }) {
+function Explorer() {
   const token = localStorage.getItem('token');
   const UserCreds = jwt(token);
   const { username, profile_pic } = UserCreds;
-  const dispatch = useDispatch();
   const ExplorerWidth = useSelector((state) => state.ExplorerDetails.value);
   const IsTracking = useSelector((state) => state.ExplorerDetails.tracker);
-  const CurrentFileId = useSelector((state) => state.ExplorerDetails.current_id);
+
+  const [FileData, setFileData] = useState(false);
+  const dispatch = useDispatch();
+  const url = import.meta.env.VITE_URL;
+  const IsReload = useSelector((state) => state.ExplorerDetails.IsReload);
+
+  const GetAllFilesData = async () => {
+    const res = await fetch(`${url}/FileData`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth-token': localStorage.getItem('token'),
+      },
+    });
+    const data = await res.json();
+    setFileData(data.tree);
+  };
+
+  useEffect(() => {
+    GetAllFilesData();
+  }, []);
+
+  // had to make another useeffect
+  //  just for this reload because if i used only useeffect
+  // then it would have created problems for reload
+  useEffect(() => {
+    if (IsReload === true) {
+      GetAllFilesData();
+      dispatch(ReloadData(false));
+    }
+  }, [IsReload]);
 
   function IntializeTracking() {
     dispatch(StartTracking(true));
@@ -62,7 +91,10 @@ function Explorer({ FileData }) {
                 <Skeleton key={index} animation="wave" style={{ marginInline: '.5rem', padding: '.2rem' }} />
               ))
               : FileData.map((elem) => (
-                <IndividualFiles key={elem._id} data={elem} />
+                <IndividualFiles
+                  key={elem._id}
+                  data={elem}
+                />
               ))
             }
         </div>

@@ -12,8 +12,6 @@ import React, {
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
 import { DeleteOutlineOutlined, DriveFileRenameOutline, ContentCopy } from '@mui/icons-material';
 import Modal from '@mui/material/Modal';
@@ -22,14 +20,18 @@ import { Link, useParams } from 'react-router-dom';
 import styles from './IndividualFiles.module.css';
 import Editor from '../Editor/Editor';
 import {
-  ChangeCurrentFileId, CurrentFileName, InitialFileName, ReloadData,
+  ChangeCurrentFileId, CurrentFileName, InitialFileName, ReloadData, UpdateCurrentFilePath,
 } from '../../Redux/ExplorerSlice';
 
-function IndividualFiles({ data, margin }) {
-  const { FileName, _id, icon } = data;
+function IndividualFiles({ data, margin, PreviousNodesData }) {
+  const {
+    FileName, _id, icon, parent,
+  } = data;
+
   const dispatch = useDispatch();
   const { FileId } = useParams();
 
+  // Redux
   const CurrentFileDetails = useSelector((state) => state.ExplorerDetails.CurrentValue);
   const CurrentFileId = useSelector((state) => state.ExplorerDetails.current_id);
   const IsReload = useSelector((state) => state.ExplorerDetails.IsReload);
@@ -37,9 +39,8 @@ function IndividualFiles({ data, margin }) {
   const IconConfig = { IconSize: 'small', IconColor: '#5A5A57', ArrowColor: '#636363' };
   const { IconSize, IconColor, ArrowColor } = IconConfig;
 
-  // To expand sub folders
+  // States
   const [expand, setexpand] = useState(false);
-  // to open the options Box
   const [ShowOptions, setShowOptions] = useState(false);
   const [NewFileOption, setNewFileOption] = useState(false);
   const [ShowEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -52,20 +53,16 @@ function IndividualFiles({ data, margin }) {
 
   const url = import.meta.env.VITE_URL;
 
-  // const AddFile = async () => {
-  //   const res = await fetch(`${url}/AddFile`, {
-  //     method: 'PUT',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'x-auth-token': localStorage.getItem('token'),
-  //     },
-  //     body: JSON.stringify({
-  //       FakeData: 'lol',
-  //     }),
-  //   });
-  //   const response = await res.json();
-  //   console.log(response);
-  // };
+  function PreviousNodesValue() {
+    let TemporaryArr = { Path: '', Root: '' };
+    if(parent !== null) {
+      TemporaryArr = { Path: `${PreviousNodesData.Path}  /  ${FileName}`, Root: PreviousNodesData.Root };
+    } else{
+      TemporaryArr = { Path: FileName, Root: _id };
+    }
+    return TemporaryArr;
+  }
+  const propValue = PreviousNodesValue();
 
   const UpdateIcon = async (Icon) => {
     const res = await fetch(`${url}/FileData/icon`, {
@@ -116,7 +113,16 @@ function IndividualFiles({ data, margin }) {
         <div className={styles.overlay_container} style={ShowOptions ? { width: '100vw', height: '100vh' } : { width: '0vw', height: '0vh' }} onClick={() => { setShowOptions(!ShowOptions); }} />
         <Link
           to={`/${_id}`}
-          // onClick={() => { console.log('this is running from event bubbling too'); }}
+          onClick={(e) => {
+            console.log(e);
+            if(e.target.nodeName !== 'SPAN' && e.target.nodeName !== 'svg') {
+              if(parent === null) {
+                dispatch(UpdateCurrentFilePath(FileName));
+              } else{
+                dispatch(UpdateCurrentFilePath(`${PreviousNodesData.Path}  /  ${FileName}`));
+              }
+            }
+          }}
           id={styles.file_link}
         >
           <div className={styles.individual_doc} style={{ marginLeft: `${margin}rem` }}>
@@ -149,6 +155,7 @@ function IndividualFiles({ data, margin }) {
                     <div
                       id={styles.emoji_picker}
                       onClick={(e) => {
+                        e.preventDefault();
                         if (e.target.nodeName === 'IMG') {
                           setShowEmojiPicker(false);
                         }
@@ -187,9 +194,9 @@ function IndividualFiles({ data, margin }) {
                     htmlColor={IconColor}
                   />
                 </div>
-                <div id={styles.Note_options} className={`${styles.Note_options} ${styles.edit_file_option}`}>
+                <div id={styles.Note_options} className={`${styles.Note_options} ${styles.edit_file_option}`} onClick={(e) => { e.preventDefault(); }}>
                   <AddIcon
-                    onClick={(e) => {
+                    onClick={() => {
                       setNewFileOption(true);
                       setexpand(true);
                       dispatch(ChangeCurrentFileId(_id));
@@ -238,6 +245,7 @@ function IndividualFiles({ data, margin }) {
                   <IndividualFiles
                     key={_id}
                     data={elem}
+                    PreviousNodesData={propValue}
                     margin={margin === 0 ? 1.5 : margin + 1.5}
                   />
                 </div>
@@ -280,7 +288,7 @@ function IndividualFiles({ data, margin }) {
               <div id={styles.modal_wrap}>
                 {/* added this IndividualFileData prop so
                 that editor can use the default props from there */}
-                <Editor source="new" IndividualFileData={{ CoverPhoto: null, values: [], id: _id }} />
+                <Editor source="new" Root={parent !== null ? PreviousNodesData.Root : _id} IndividualFileData={{ CoverPhoto: null, values: [], id: _id }} />
               </div>
             </Modal>
 
@@ -295,6 +303,7 @@ function IndividualFiles({ data, margin }) {
 
 IndividualFiles.defaultProps = {
   margin: 0,
+  PreviousNodesData: null,
 };
 
 export default IndividualFiles;

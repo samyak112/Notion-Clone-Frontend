@@ -11,9 +11,10 @@ function FileEditArea() {
   const dispatch = useDispatch();
   const ExplorerWidth = useSelector((state) => state.ExplorerDetails.value);
   const IsTracking = useSelector((state) => state.ExplorerDetails.tracker);
+  const FilePath = useSelector((state) => state.ExplorerDetails.CurrentFilePath);
   const { FileId } = useParams();
   const url = import.meta.env.VITE_URL;
-  const [IndividualFileData, setIndividualFileData] = useState({ CoverPhoto: null, values: []});
+  const [IndividualFileData, setIndividualFileData] = useState({ CoverPhoto: null, values: [] });
 
   function StopTracking() {
     dispatch(StartTracking(false));
@@ -32,7 +33,6 @@ function FileEditArea() {
     });
     const data = await res.json();
     setIndividualFileData(data.FileData);
-    console.log(data,'this is that data')
   };
 
   useEffect(() => {
@@ -55,7 +55,7 @@ function FileEditArea() {
       onMouseUp={StopTracking}
       onMouseMove={ExtendExplorer}
     >
-      <div id={styles.file_details}>File details here</div>
+      <div id={styles.file_details}>{FilePath}</div>
       <Editor IndividualFileData={IndividualFileData} source="old" />
     </div>
   );

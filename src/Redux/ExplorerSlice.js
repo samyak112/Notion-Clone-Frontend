@@ -10,6 +10,10 @@ export const ExplorerDetailsSlice = createSlice({
     InitialValues: { FileName: null, Icon: null },
     CurrentValue: { FileName: null, Icon: null },
     IsReload: false,
+    UpdateTreevalue: {
+      Root: null, Icon: null, FileName: null, NewFileId: null,
+    },
+    CurrentFilePath: null,
   },
   reducers: {
     ExplorerWidthValue: (state, action) => {
@@ -30,12 +34,20 @@ export const ExplorerDetailsSlice = createSlice({
     ReloadData: (state, action) => {
       state.IsReload = action.payload;
     },
+    UpdateTree: (state, action) => {
+      state.IsReload = action.payload;
+    },
+    UpdateCurrentFilePath: (state, action) => {
+      state.CurrentFilePath = action.payload;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
 export const {
-  ExplorerWidthValue, StartTracking, ChangeCurrentFileId, CurrentFileName, InitialFileName, ReloadData,
+  ExplorerWidthValue, StartTracking,
+  ChangeCurrentFileId, CurrentFileName, InitialFileName,
+  ReloadData, UpdateTree, UpdateCurrentFilePath,
 } = ExplorerDetailsSlice.actions;
 
 export default ExplorerDetailsSlice.reducer;
