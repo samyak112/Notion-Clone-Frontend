@@ -14,7 +14,9 @@ import {
 import EditorTop from '../EditorTop/EditorTop';
 import Blocks from '../Blocks/Blocks';
 
-function Editor({ IndividualFileData, source, Root = null }) {
+function Editor({
+  IndividualFileData, source, Root = null, CloseNewFileBox,
+}) {
   // redux
   const CurrentFileDetails = useSelector((state) => state.ExplorerDetails.CurrentValue);
   const InitialFileDetails = useSelector((state) => state.ExplorerDetails.InitialValues);
@@ -41,9 +43,6 @@ function Editor({ IndividualFileData, source, Root = null }) {
     if (source === 'new' || CurrentFileId === ref_id) {
       return { RenderedFileName: FileName, RenderedIcon: Icon };
     }
-    // if (CurrentFileId === ref_id) {
-    //   return { fileName: FileName, icon: Icon };
-    // }
     return { RenderedFileName: InitialFileDetails.FileName, RenderedIcon: InitialFileDetails.Icon };
   }
 
@@ -130,9 +129,6 @@ function Editor({ IndividualFileData, source, Root = null }) {
         }),
       });
       const response = await res.json();
-      // if (response.status === 200) {
-      //   dispatch(ReloadData(true));
-      // }
     } else {
       const { BlockValues, FileName } = FinalPayload;
       if (FileName === '' || BlockValues.length === 0) {
@@ -150,11 +146,16 @@ function Editor({ IndividualFileData, source, Root = null }) {
         });
         const response = await res.json();
         if (response.status === 200) {
+          CloseNewFileBox();
           dispatch(UpdateTree({
-            Root,
-            Icon: CurrentFileDetails.Icon,
-            FileName: CurrentFileDetails.FileName,
-            NewFileId: response.id,
+            data: {
+              Target: IndividualFileData.id,
+              Root,
+              icon: CurrentFileDetails.Icon,
+              FileName: CurrentFileDetails.FileName,
+              NewFileId: response.id,
+            },
+            action: 'add',
           }));
         }
       }

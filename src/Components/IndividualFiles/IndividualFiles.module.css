@@ -6,12 +6,14 @@
     border-radius: 4px;
     cursor: pointer;
     font-size: .9rem;
+    /* border: 2px solid black; */
   }
   
   .individual_doc{
     display: flex;
     gap: 1rem;
     justify-content: space-between;
+    /* border: 2px solid black; */
   }
 
   #file_link{
@@ -28,6 +30,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    /* position: relative; */
   }
 
   #emoji_picker{
@@ -71,6 +74,32 @@
     width: 15rem;
     padding: .5rem;
     z-index: 1;
+  }
+
+  
+  #new_file_dialog_wrap{
+    position: absolute;
+    padding: .3rem;
+    background-color: white;
+    width: 20rem;
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 10%), 0 8px 16px rgb(0 0 0 / 10%);
+  }
+
+  #new_file_dialog_wrap input[type='text']:focus{
+    outline: none;
+  }
+
+  #new_file_dialog{
+    position: relative;
+    height: 100%;
+    width: 100%;
+    background-color: #F7F7F5;
+    border-radius: inherit;
+    padding: .2rem;
+    z-index: 1;
+    border: 2px solid #E0E0DE;
+    color: black;
   }
 
   .expand_options_comps{
@@ -132,8 +161,8 @@
     background-color: white;
   }
 
-  #modal_wrap::-webkit-scrollbar{
+  /* #modal_wrap::-webkit-scrollbar{
     display: none;
-  }
+  } */
 
  

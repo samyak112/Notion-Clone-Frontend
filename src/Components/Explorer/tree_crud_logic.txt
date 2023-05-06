@@ -1,0 +1,124 @@
+let tree = [
+    {
+        "_id": "7d362d90-b1a5-4307-b03f-f1c20e3751d8",
+        "FileName": "Getting Started",
+        "icon": "📄",
+        "parent": null,
+        "children": [
+            {
+                "_id": "ecfecbab-bec0-445b-912c-2b8a91a453dd",
+                "FileName": "asaadaasdasd",
+                "icon": "😄",
+                "parent": "7d362d90-b1a5-4307-b03f-f1c20e3751d8",
+                "children": [
+                    {
+                        "_id": "e27b2602-e386-4eb6-845b-53ef862b4d8d",
+                        "FileName": "asdasd",
+                        "icon": "👹",
+                        "parent": "ecfecbab-bec0-445b-912c-2b8a91a453dd",
+                        "children": [
+                            {
+                                "_id": "f34ad209-ecfc-4b90-9446-bf8693944c70",
+                                "FileName": "test",
+                                "icon": "📄",
+                                "parent": "e27b2602-e386-4eb6-845b-53ef862b4d8d",
+                                "children": [
+                                    {
+                                        "_id": "54d14c9a-cae2-4b14-9fdb-0e6fcf7931fe",
+                                        "FileName": "one more test",
+                                        "icon": "📄",
+                                        "parent": "f34ad209-ecfc-4b90-9446-bf8693944c70"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "_id": "55a121ca-eaaa-4f10-8300-516d9ec7c2c6",
+                "FileName": "one more child",
+                "icon": "📄",
+                "parent": "7d362d90-b1a5-4307-b03f-f1c20e3751d8",
+                "Children" : []
+            },
+            {
+                "_id": "6e49e42d-55b5-4f41-ac72-09094e4934b7",
+                "FileName": "just more one",
+                "icon": "📄",
+                "parent": "7d362d90-b1a5-4307-b03f-f1c20e3751d8",
+                "Children": []
+            }
+        ]
+    },
+    {
+        "_id": "49b970c9-cca1-4323-a4be-43257c3e3e49",
+        "FileName": "Quick Note",
+        "icon": "😆",
+        "parent": null,
+        "children": [
+            {
+                "_id": "dc20f87f-fce6-40da-a6a5-61fe3605f045",
+                "FileName": "Quick note chid",
+                "icon": "📄",
+                "parent": "49b970c9-cca1-4323-a4be-43257c3e3e49",
+                "children": [
+                    {
+                        "_id": "2d360d04-5b6b-48da-a2be-ab7dc4c73f04",
+                        "FileName": "one more child",
+                        "icon": "📄",
+                        "parent": "dc20f87f-fce6-40da-a6a5-61fe3605f045",
+                        "children": [
+                            {
+                                "_id": "4b079d1f-0f4e-4791-b156-dce64771a312",
+                                "FileName": "child in child",
+                                "icon": "📄",
+                                "parent": "2d360d04-5b6b-48da-a2be-ab7dc4c73f04",
+                                "children":[]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]
+
+function UpdateTree(tree){
+    for (let i = 0; i < tree.length; i++) {
+        if(tree[i]._id === Parent){
+            const response = SecondTree(tree[i])
+            return response
+        }
+    }
+}
+
+function SecondTree(tree){
+    let response = false
+    console.log('came here now')
+    let val = null
+    if(tree._id == TargetValue){
+        tree.children.push(NewValue)
+        response = true
+    }
+    else if(tree.children.length > 0){
+        val = tree.children.map((elem)=>{
+            console.log(elem)
+            if(SecondTree(elem)){
+                response = true
+            }
+        })
+    return response
+    }
+    
+}
+
+let Parent = "49b970c9-cca1-4323-a4be-43257c3e3e49"
+let NewValue = 'test confirmed'
+let NewValueId = '45788-ccccq2-234234'
+let TargetValue = '4b079d1f-0f4e-4791-b156-dce64771a312'
+
+
+let ans = UpdateTree(tree)
+console.log(ans,'this is the answer')
+console.log(tree)

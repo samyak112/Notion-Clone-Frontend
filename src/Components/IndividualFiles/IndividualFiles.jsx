@@ -13,14 +13,14 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import AddIcon from '@mui/icons-material/Add';
-import { DeleteOutlineOutlined, DriveFileRenameOutline, ContentCopy } from '@mui/icons-material';
+import { DeleteOutlineOutlined, DriveFileRenameOutline } from '@mui/icons-material';
 import Modal from '@mui/material/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import styles from './IndividualFiles.module.css';
 import Editor from '../Editor/Editor';
 import {
-  ChangeCurrentFileId, CurrentFileName, InitialFileName, ReloadData, UpdateCurrentFilePath,
+  ChangeCurrentFileId, CurrentFileName, InitialFileName, UpdateCurrentFilePath, UpdateTree,
 } from '../../Redux/ExplorerSlice';
 
 function IndividualFiles({ data, margin, PreviousNodesData }) {
@@ -34,7 +34,6 @@ function IndividualFiles({ data, margin, PreviousNodesData }) {
   // Redux
   const CurrentFileDetails = useSelector((state) => state.ExplorerDetails.CurrentValue);
   const CurrentFileId = useSelector((state) => state.ExplorerDetails.current_id);
-  const IsReload = useSelector((state) => state.ExplorerDetails.IsReload);
 
   const IconConfig = { IconSize: 'small', IconColor: '#5A5A57', ArrowColor: '#636363' };
   const { IconSize, IconColor, ArrowColor } = IconConfig;
@@ -44,6 +43,7 @@ function IndividualFiles({ data, margin, PreviousNodesData }) {
   const [ShowOptions, setShowOptions] = useState(false);
   const [NewFileOption, setNewFileOption] = useState(false);
   const [ShowEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [NewFileName, setNewFileName] = useState({ IsOpen: false, value: null });
   const handleClose = () => {
     setNewFileOption(false);
     dispatch(CurrentFileName({ FileName, Icon: icon }));
@@ -64,20 +64,51 @@ function IndividualFiles({ data, margin, PreviousNodesData }) {
   }
   const propValue = PreviousNodesValue();
 
-  const UpdateIcon = async (Icon) => {
-    const res = await fetch(`${url}/FileData/icon`, {
-      method: 'PUT',
+  const UpdateFileData = async (Item, type) => {
+    const res = await fetch(`${url}/FileData/FileDetails`, {
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         'x-auth-token': localStorage.getItem('token'),
       },
       body: JSON.stringify({
-        FileId: _id, Icon,
+        FileId: _id, ItemData: { Item, type },
       }),
     });
     const response = await res.json();
     if(response.status === 200) {
-      dispatch(ReloadData(true));
+      dispatch(UpdateTree({
+        data: {
+          NewItem: Item,
+          type,
+          Target: _id,
+          Root: parent !== null ? PreviousNodesData.Root : _id,
+        },
+        action: 'update',
+      }));
+    }
+  };
+
+  const DeleteFile = async () => {
+    const res = await fetch(`${url}/FileData`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth-token': localStorage.getItem('token'),
+      },
+      body: JSON.stringify({
+        id: _id,
+      }),
+    });
+    const response = await res.json();
+    if(response.status === 200) {
+      dispatch(UpdateTree({
+        data: {
+          Target: _id,
+          Root: parent !== null ? PreviousNodesData.Root : _id,
+        },
+        action: 'delete',
+      }));
     }
   };
 
@@ -108,13 +139,24 @@ function IndividualFiles({ data, margin, PreviousNodesData }) {
     <>
 
       <div className={styles.individual_doc_wrap} style={FileId === _id ? { background: '#F1F1F0' } : {}}>
+
         {/* this div used to cover the whole page when user is checking the options
         it is not visible tho but stops users from clicking anywhere else */}
-        <div className={styles.overlay_container} style={ShowOptions ? { width: '100vw', height: '100vh' } : { width: '0vw', height: '0vh' }} onClick={() => { setShowOptions(!ShowOptions); }} />
+        <div
+          className={styles.overlay_container}
+          style={ShowOptions || NewFileName.IsOpen ? { width: '100vw', height: '100vh' } : { width: '0vw', height: '0vh' }}
+          onClick={() => {
+            if(ShowOptions) {
+              setShowOptions(false);
+            } else if(NewFileName.IsOpen) {
+              setNewFileName({ ...NewFileName, IsOpen: false });
+              UpdateFileData(NewFileName.value, 'FileName');
+            }
+          }}
+        />
         <Link
           to={`/${_id}`}
           onClick={(e) => {
-            console.log(e);
             if(e.target.nodeName !== 'SPAN' && e.target.nodeName !== 'svg') {
               if(parent === null) {
                 dispatch(UpdateCurrentFilePath(FileName));
@@ -165,7 +207,7 @@ function IndividualFiles({ data, margin, PreviousNodesData }) {
                         onEmojiClick={(e) => {
                           dispatch(ChangeCurrentFileId(_id));
                           dispatch(CurrentFileName({ FileName, Icon: e.emoji }));
-                          UpdateIcon(e.emoji);
+                          UpdateFileData(e.emoji, 'icon');
                         }}
                       />
                     </div>
@@ -208,21 +250,33 @@ function IndividualFiles({ data, margin, PreviousNodesData }) {
                 </div>
               </div>
 
-              <div id={styles.expand_options_wrap} style={{ display: ShowOptions ? 'block' : 'none' }}>
+              <div
+                id={styles.expand_options_wrap}
+                style={{ display: ShowOptions ? 'block' : 'none' }}
+                onClick={(e) => {
+                  if(e.target.innerText === 'Rename' || e.target.innerText === 'Delete') {
+                    setShowOptions(false);
+                  }
+                }}
+              >
                 <div id={styles.expand_options}>
-                  <div className={styles.expand_options_comps}>
+                  <div className={styles.expand_options_comps} onClick={() => { DeleteFile(); }}>
                     <DeleteOutlineOutlined fontSize={IconSize} />
                     Delete
                   </div>
-                  <div className={styles.expand_options_comps}>
-                    <ContentCopy fontSize={IconSize} />
-                    Duplicate
-                  </div>
-                  <div className={styles.expand_options_comps}>
+                  <div className={styles.expand_options_comps} onClick={() => { setNewFileName({ ...NewFileName, IsOpen: true }); }}>
                     <DriveFileRenameOutline fontSize={IconSize} />
                     Rename
                   </div>
                 </div>
+              </div>
+              <div id={styles.new_file_dialog_wrap} style={NewFileName.IsOpen ? { display: 'block' } : { display: 'none' }}>
+                <input
+                  type="text"
+                  id={styles.new_file_dialog}
+                  value={NewFileName.value}
+                  onChange={(e) => { setNewFileName({ ...NewFileName, value: e.target.value }); }}
+                />
               </div>
             </div>
           </div>
@@ -288,7 +342,12 @@ function IndividualFiles({ data, margin, PreviousNodesData }) {
               <div id={styles.modal_wrap}>
                 {/* added this IndividualFileData prop so
                 that editor can use the default props from there */}
-                <Editor source="new" Root={parent !== null ? PreviousNodesData.Root : _id} IndividualFileData={{ CoverPhoto: null, values: [], id: _id }} />
+                <Editor
+                  source="new"
+                  Root={parent !== null ? PreviousNodesData.Root : _id}
+                  IndividualFileData={{ CoverPhoto: null, values: [], id: _id }}
+                  CloseNewFileBox={handleClose}
+                />
               </div>
             </Modal>
 

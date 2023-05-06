@@ -100,3 +100,9 @@
 #add_new_page:hover{
   background-color: #e4e1e1;
 }
+
+#no_data{
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
