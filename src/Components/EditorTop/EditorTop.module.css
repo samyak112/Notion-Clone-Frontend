@@ -122,8 +122,12 @@ a{
 
 #save_button{
     border-radius: 5px;
-    background-color: #ECC5FB;
+    background-color: #342a95;
     width: 8rem;
+}
+
+#save_button:hover{
+    background-color: #4738d5;
 }
 
 

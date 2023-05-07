@@ -28,6 +28,8 @@ function Blocks({
     value, style, _id, color, background,
   } = elem;
 
+  console.log(style);
+
   // states
   const [isDragging, setisDragging] = useState(null);
   const [ElementValue, setElementValue] = useState(value);

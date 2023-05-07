@@ -1,6 +1,6 @@
 #main{
     width: 100%;
-    height: 100%;
+    height: 100vh;
     display: grid;
     grid-template-rows: 3rem auto;
 
@@ -10,6 +10,50 @@
     width: 100%;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     font-size: .8rem;
-    padding-left: 1rem;
+    padding-inline: 2rem;
+}
+
+#file_details_right{
+    padding-inline: 1rem;
+    padding-block: .3rem;
+    border-radius: 4px;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+}
+
+#file_details_right:hover{
+    background-color: rgb(30, 30, 30);
+}
+
+.main2{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#unknown_file{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.unknown_file_comps{
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+#image_wrap{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#image{
+    height: 100%;
+    width: 30%;
 }
