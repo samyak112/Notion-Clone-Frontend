@@ -55,8 +55,15 @@ function FileEditArea() {
       onMouseUp={StopTracking}
       onMouseMove={ExtendExplorer}
     >
-      <div id={styles.file_details}>{FilePath}</div>
-      <Editor IndividualFileData={IndividualFileData} source="old" />
+      <div id={styles.file_details}>
+        {
+      FilePath === null
+        ? ''
+        : FilePath.path
+      }
+
+      </div>
+      <Editor Root={FilePath === null ? null : FilePath.Root} IndividualFileData={IndividualFileData} source="old" />
     </div>
   );
 }

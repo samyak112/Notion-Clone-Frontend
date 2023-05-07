@@ -4,9 +4,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import DescriptionIcon from '@mui/icons-material/Description';
-import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import Alert from '@mui/material/Alert';
+import { useParams } from 'react-router-dom';
 import styles from './Editor.module.css';
 import {
   InitialFileName, ChangeCurrentFileId, CurrentFileName, UpdateTree,
@@ -34,10 +34,34 @@ function Editor({
   const { CoverPhoto, values, ref_id } = IndividualFileData;
   const dispatch = useDispatch();
 
+  const { FileId } = useParams();
+
   const url = import.meta.env.VITE_URL;
   useEffect(() => {
     setblocks(values);
   }, [values]);
+
+  async function UpdateLastVisitedFile() {
+    const res = await fetch(`${url}/lastvisitedfile`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth-token': localStorage.getItem('token'),
+      },
+      body: JSON.stringify({
+        id: FileId,
+      }),
+    });
+    const response = await res.json();
+    console.log(response);
+  }
+
+  useEffect(() => {
+    if (source === 'old') {
+      localStorage.setItem('LastVisitedFileId', FileId);
+      UpdateLastVisitedFile();
+    }
+  }, [FileId]);
 
   function FileDetailsToRender() {
     if (source === 'new' || CurrentFileId === ref_id) {
@@ -110,11 +134,10 @@ function Editor({
     };
 
     if (InitialFileDetails.FileName !== CurrentFileDetails.FileName) {
-      FinalPayload = {
-        ...FinalPayload,
-        FileName: CurrentFileDetails.FileName,
-        Icon: CurrentFileDetails.Icon,
-      };
+      FinalPayload = { ...FinalPayload, FileName: CurrentFileDetails.FileName };
+    }
+    if (InitialFileDetails.Icon !== CurrentFileDetails.Icon) {
+      FinalPayload = { ...FinalPayload, Icon: CurrentFileDetails.Icon };
     }
 
     if (source === 'old') {
@@ -129,9 +152,21 @@ function Editor({
         }),
       });
       const response = await res.json();
+      if (response.status === 200) {
+        dispatch(UpdateTree({
+          data: {
+            NewItem: { NewFileName: FinalPayload.FileName, NewIcon: FinalPayload.Icon },
+            Target: ref_id,
+            Root,
+          },
+          action: 'update',
+        }));
+      }
     } else {
-      const { BlockValues, FileName } = FinalPayload;
-      if (FileName === '' || BlockValues.length === 0) {
+      const { BlockValues } = FinalPayload;
+      // didnt destructured FileName here because its already been
+      // used above and would have caused  in understanding if same name is used again
+      if (FinalPayload.FileName === '' || BlockValues.length === 0) {
         setShowAlert(true);
       } else {
         const res = await fetch(`${url}/FileData`, {

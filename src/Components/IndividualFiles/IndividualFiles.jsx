@@ -43,7 +43,7 @@ function IndividualFiles({ data, margin, PreviousNodesData }) {
   const [ShowOptions, setShowOptions] = useState(false);
   const [NewFileOption, setNewFileOption] = useState(false);
   const [ShowEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [NewFileName, setNewFileName] = useState({ IsOpen: false, value: null });
+  const [NewFileName, setNewFileName] = useState({ IsOpen: false, value: '' });
   const handleClose = () => {
     setNewFileOption(false);
     dispatch(CurrentFileName({ FileName, Icon: icon }));
@@ -80,7 +80,6 @@ function IndividualFiles({ data, margin, PreviousNodesData }) {
       dispatch(UpdateTree({
         data: {
           NewItem: Item,
-          type,
           Target: _id,
           Root: parent !== null ? PreviousNodesData.Root : _id,
         },
@@ -119,6 +118,11 @@ function IndividualFiles({ data, margin, PreviousNodesData }) {
         dispatch(CurrentFileName({ FileName, Icon: icon }));
       }
       dispatch(ChangeCurrentFileId(_id));
+      if(parent === null) {
+        dispatch(UpdateCurrentFilePath({ path: FileName, Root: _id }));
+      } else{
+        dispatch(UpdateCurrentFilePath({ path: `${PreviousNodesData.Path}  /  ${FileName}`, Root: PreviousNodesData.Root }));
+      }
     }
   }, [FileId]);
 
@@ -149,22 +153,17 @@ function IndividualFiles({ data, margin, PreviousNodesData }) {
             if(ShowOptions) {
               setShowOptions(false);
             } else if(NewFileName.IsOpen) {
-              setNewFileName({ ...NewFileName, IsOpen: false });
-              UpdateFileData(NewFileName.value, 'FileName');
+              setNewFileName({ IsOpen: false, value: '' });
+              if(NewFileName.value !== '') {
+                dispatch(ChangeCurrentFileId(_id));
+                dispatch(CurrentFileName({ FileName: NewFileName.value, Icon }));
+                UpdateFileData({ NewFileName: NewFileName.value, NewIcon: null }, 'FileName');
+              }
             }
           }}
         />
         <Link
           to={`/${_id}`}
-          onClick={(e) => {
-            if(e.target.nodeName !== 'SPAN' && e.target.nodeName !== 'svg') {
-              if(parent === null) {
-                dispatch(UpdateCurrentFilePath(FileName));
-              } else{
-                dispatch(UpdateCurrentFilePath(`${PreviousNodesData.Path}  /  ${FileName}`));
-              }
-            }
-          }}
           id={styles.file_link}
         >
           <div className={styles.individual_doc} style={{ marginLeft: `${margin}rem` }}>
@@ -207,7 +206,7 @@ function IndividualFiles({ data, margin, PreviousNodesData }) {
                         onEmojiClick={(e) => {
                           dispatch(ChangeCurrentFileId(_id));
                           dispatch(CurrentFileName({ FileName, Icon: e.emoji }));
-                          UpdateFileData(e.emoji, 'icon');
+                          UpdateFileData({ NewFileName: null, NewIcon: e.emoji }, 'icon');
                         }}
                       />
                     </div>

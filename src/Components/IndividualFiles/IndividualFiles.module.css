@@ -84,6 +84,7 @@
     width: 20rem;
     border-radius: 3px;
     box-shadow: 0 2px 4px rgb(0 0 0 / 10%), 0 8px 16px rgb(0 0 0 / 10%);
+    z-index: 1;
   }
 
   #new_file_dialog_wrap input[type='text']:focus{
@@ -97,7 +98,6 @@
     background-color: #F7F7F5;
     border-radius: inherit;
     padding: .2rem;
-    z-index: 1;
     border: 2px solid #E0E0DE;
     color: black;
   }

@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
+import React from 'react';
+import { useGoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import styles from './login.module.css';
 import logo from '../../assets/logo.svg';
@@ -27,7 +26,6 @@ function Login() {
         // didnt added token in destructuring because token is only recieved if status is 200 or 201
         if (status === 201 || status === 200) {
           const { FileId, token } = data;
-          console.log('came here');
           localStorage.setItem('token', token);
           localStorage.setItem('LastVisitedFileId', FileId);
           Navigate(`/${FileId}`);

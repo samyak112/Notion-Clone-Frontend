@@ -81,7 +81,7 @@ function Explorer() {
     }
   };
 
-  function UpdateNode(tree, TargetValue, NewFileId, FileName, icon, type, action, NewItem) {
+  function UpdateNode(tree, TargetValue, NewFileId, FileName, icon, action, NewItem) {
     const response = tree.children.map((elem) => {
       if (elem._id === TargetValue) {
         return {
@@ -96,8 +96,8 @@ function Explorer() {
               children: [],
 
             }] : elem.children,
-          FileName: action === 'update' && type === 'FileName' ? NewItem : elem.FileName,
-          icon: action === 'update' && type === 'icon' ? NewItem : elem.icon,
+          FileName: action === 'update' && NewItem.NewFileName !== null ? NewItem.NewFileName : elem.FileName,
+          icon: action === 'update' && NewItem.NewIcon !== null ? NewItem.NewIcon : elem.icon,
         };
       }
       if (elem.children) {
@@ -107,7 +107,6 @@ function Explorer() {
           NewFileId,
           FileName,
           icon,
-          type,
           action,
           NewItem,
         );
@@ -123,8 +122,9 @@ function Explorer() {
   function UpdateTree(tree, Parent, TargetValue) {
     const { action } = CheckUpdateTree;
     const {
-      NewFileId = null, FileName = null, icon = null, type = null, NewItem = null,
+      NewFileId = null, FileName = null, icon = null, NewItem = null,
     } = CheckUpdateTree.data;
+
     if (TargetValue === Parent) {
       if (action === 'add' || action === 'update') {
         return tree.map((elem) => {
@@ -141,8 +141,8 @@ function Explorer() {
                   children: [],
 
                 }] : elem.children,
-              FileName: action === 'update' && type === 'FileName' ? NewItem : elem.FileName,
-              icon: action === 'update' && type === 'icon' ? NewItem : elem.icon,
+              FileName: action === 'update' && NewItem.NewFileName !== null ? NewItem.NewFileName : elem.FileName,
+              icon: action === 'update' && NewItem.NewIcon !== null ? NewItem.NewIcon : elem.icon,
             };
           }
           return elem;
@@ -166,7 +166,6 @@ function Explorer() {
               NewFileId,
               FileName,
               icon,
-              type,
               action,
               NewItem,
             );
@@ -187,7 +186,6 @@ function Explorer() {
         Root, Target,
       } = CheckUpdateTree.data;
       const response = UpdateTree(FileData, Root, Target);
-      console.log(response);
       setFileData(response);
     }
   }, [CheckUpdateTree]);
