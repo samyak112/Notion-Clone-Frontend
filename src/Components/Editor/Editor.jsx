@@ -24,7 +24,7 @@ function Editor({
 
   // state
   const [blocks, setblocks] = useState([]);
-  const [ShowAlert, setShowAlert] = useState(false);
+  const [ShowAlert, setShowAlert] = useState({ error: false, success: false });
 
   // ref
   const NumberedListCount = useRef(0);
@@ -153,6 +153,7 @@ function Editor({
       });
       const response = await res.json();
       if (response.status === 200) {
+        setShowAlert({ error: false, success: true });
         dispatch(UpdateTree({
           data: {
             NewItem: { NewFileName: FinalPayload.FileName, NewIcon: FinalPayload.Icon },
@@ -167,7 +168,7 @@ function Editor({
       // didnt destructured FileName here because its already been
       // used above and would have caused  in understanding if same name is used again
       if (FinalPayload.FileName === '' || BlockValues.length === 0) {
-        setShowAlert(true);
+        setShowAlert({ error: true, success: false });
       } else {
         const res = await fetch(`${url}/FileData`, {
           method: 'PUT',
@@ -197,10 +198,14 @@ function Editor({
     }
   }
 
+
   return (
     <div id={styles.main}>
-      <div id={styles.error_message} style={ShowAlert ? { display: 'block' } : { display: 'none' }}>
-        <Alert severity="error" onClose={() => { setShowAlert(false); }}>Add File Name and minimum one Block</Alert>
+      <div className={styles.message} style={ShowAlert.error ? { display: 'block' } : { display: 'none' }}>
+        <Alert severity="error" onClose={() => { setShowAlert({ error: false, success: false }); }}>Add File Name and minimum one Block</Alert>
+      </div>
+      <div className={styles.message} style={ShowAlert.success ? { display: 'block' } : { display: 'none' }}>
+        <Alert severity="success" onClose={() => { setShowAlert({ error: false, success: false }); }}>File Saved</Alert>
       </div>
       <div id={styles.top}>
         <EditorTop

@@ -6,7 +6,7 @@
     overflow-y: scroll;
 }
 
-#error_message{
+.message{
     position: absolute;
     right: 0px;
     z-index: 1;
