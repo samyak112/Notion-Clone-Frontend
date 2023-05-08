@@ -45,6 +45,7 @@ function FileEditArea() {
   };
 
   useEffect(() => {
+    setIsFileUnkown(null);
     GetFileData();
   }, [FileId]);
 
