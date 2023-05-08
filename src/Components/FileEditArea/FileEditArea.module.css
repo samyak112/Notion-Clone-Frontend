@@ -19,7 +19,8 @@
     padding-inline: 1rem;
     padding-block: .3rem;
     border-radius: 4px;
-    background-color: black;
+    background-color: #373A40
+    ;
     color: white;
     cursor: pointer;
 }
