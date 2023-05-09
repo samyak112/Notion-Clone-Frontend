@@ -1,9 +1,25 @@
 # Notion-Clone-Frontend
 
 Description -
-This appication is an attempt to clone the functionalites of the Notion web version.
+This appication is an attempt to clone the functionalites of the Notion's web version.
+
+Live Demo - https://notion-clonee.netlify.app/
+
+Video Demo - https://www.linkedin.com/posts/samyak-jain-835a66194_frontend-react-nodejs-activity-7061741537906278400-WU9n?utm_source=share&utm_medium=member_desktop
 
 Backend Here - https://github.com/samyak112/Notion-Clone-Backend
+
+Note:- 
+1. Features are listed at the bottom
+
+2. Unsplash only allows 50 requests per hour on free pack so you might not be able to see the cover photo
+
+# Previews:
+
+![image](https://github.com/samyak112/Notion-Clone-Frontend/assets/73217093/906686e9-a380-4692-98ae-5d8cbbf3b5d2)
+
+
+
 # Technologies Used
 
 Front end-
